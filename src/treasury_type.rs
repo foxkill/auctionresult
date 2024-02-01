@@ -2,7 +2,7 @@
 //! 
 //! The different types of treasuries
 
-use std::{env::var, str::FromStr};
+use std::str::FromStr;
 
 #[derive(Debug)]
 pub struct ConvertError;
