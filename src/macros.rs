@@ -2,6 +2,8 @@
 //! 
 //! This file contains all macro implementations used in this project.
 //
+
+#[allow(unused)]
 macro_rules! hashmap {
     ($($key:expr => $value:expr),*) => ({
         let mut map = HashMap::new();
@@ -9,5 +11,5 @@ macro_rules! hashmap {
         map
     });
 }
-
+#[allow(unused)]
 pub(crate) use hashmap;

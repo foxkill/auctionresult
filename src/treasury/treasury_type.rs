@@ -37,7 +37,7 @@ impl FromStr for TreasuryType {
 mod tests {
     use std::str::FromStr;
 
-    use crate::treasury_type::TreasuryType;
+    use super::*;
 
     #[test]
     fn it_should_convert_a_string_to_a_treasury_type() {

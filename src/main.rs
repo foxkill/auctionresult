@@ -1,14 +1,12 @@
 //! # The Auction Result App
 // 
 
-mod treasury_type;
+mod treasury;
 mod macros;
 
+use treasury::Treasury;
+
 fn main() {
-    println!("Hello, world!");
-}
-
-#[cfg(test)]
-mod tests {
-
+    let tr = Treasury::default();
+    println!("{tr:?}");
 }
