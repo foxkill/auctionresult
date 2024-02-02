@@ -3,17 +3,22 @@
 //! The different types of treasuries
 
 use std::str::FromStr;
+use serde::Deserialize;
 
 #[derive(Debug)]
 pub struct ConvertError;
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Deserialize, Default)]
 pub enum TreasuryType {
     Bill,
     Note,
     Bond,
+    #[serde(rename = "FRN")]
     Frn,
+    #[serde(rename = "CMB")]
     Cmb,
+    #[default]
+    Null,
 }
 
 impl FromStr for TreasuryType {
