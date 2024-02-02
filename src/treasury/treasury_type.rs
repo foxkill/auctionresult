@@ -9,7 +9,7 @@ use serde::Deserialize;
 pub struct ConvertError;
 
 #[derive(Debug, PartialEq, Deserialize, Default)]
-pub enum TreasuryType {
+pub(crate) enum TreasuryType {
     Bill,
     Note,
     Bond,

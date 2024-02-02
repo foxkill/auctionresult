@@ -1,11 +1,11 @@
 //! # Treasury
 //! 
 //! 
-use serde::{Deserialize};
+use serde::Deserialize;
 // use serde_with::{serde_as, DisplayFromStr};
 
 mod deserializer;
-mod treasury_type;
+pub mod treasury_type;
 
 use deserializer::f64_from_string;
 use deserializer::bool_from_string;
