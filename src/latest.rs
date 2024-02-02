@@ -6,6 +6,8 @@ use crate::treasury::treasury_type::TreasuryType;
 
 static AUCTIONED_URL: &str = "https://www.treasurydirect.gov/TA_WS/securities/auctioned";
 
+#[cfg(test)]
+mod tests;
 
 #[derive(Debug, Default)]
 pub struct Latest {
@@ -29,14 +31,22 @@ impl Latest {
         self.days
     }
 
-    fn load(&self) -> usize {
+    pub fn load(&self) -> usize {
         0
     }
 
-    fn url(&self) -> String {
-        String::from(AUCTIONED_URL)
+    pub fn url(&self) -> String {
+        let mut url = String::from(AUCTIONED_URL);
+        if self.treasury_type != TreasuryType::Null {
+            url.push_str("?type=");
+            url.push_str(&self.treasury_type.to_string());
+            url.push_str("&days=");
+            url.push_str(&self.days.to_string());
+        } else {
+            url.push_str("?days=");
+            url.push_str(&self.days.to_string());
+        }
+        url
     }
 }
 
-#[cfg(test)]
-mod tests;

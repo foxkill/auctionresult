@@ -2,10 +2,7 @@
 //!
 //!
 mod fixture;
-
 extern crate serde;
-
-use std::thread::Thread;
 
 use chrono::DateTime;
 use crate::treasury::{tests::fixture::MULTIPLE_ITEMS_COUNT, Treasury};
