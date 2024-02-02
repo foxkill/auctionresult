@@ -7,10 +7,8 @@ extern crate serde;
 
 use std::thread::Thread;
 
-use serde::{Serialize, Deserialize};
 use chrono::DateTime;
-
-use crate::treasury::Treasury;
+use crate::treasury::{tests::fixture::MULTIPLE_ITEMS_COUNT, Treasury};
 
 #[test]
 fn date_time_parse() {
@@ -25,8 +23,10 @@ fn date_time_parse() {
 }
 
 #[test]
-fn deserialize_treasury_struct() {
-    let fxt = fixture::get_json();
-    let result: Vec<Treasury> = serde_json::from_str(fxt).unwrap();
-    println!("{:#?}", result);
+fn deserialize_multiple_items() {
+    let fxt = fixture::api_multiple_items();
+    let result: Vec<Treasury> = serde_json::from_str(fxt).unwrap_or_else(|_| {
+        vec![Treasury::default()]
+    });
+    assert!(result.len() == MULTIPLE_ITEMS_COUNT);
 }
