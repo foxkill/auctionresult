@@ -1,8 +1,9 @@
 //! Fixture file
 //!
 //!
+pub(crate) const MULTIPLE_ITEMS_COUNT: usize = 11;
 
-pub fn lastest_json() -> &'static str {
+pub(crate) fn api_multiple_items() -> &'static str {
     r#"[
         {
             "cusip": "912797JB4",
@@ -1327,7 +1328,7 @@ pub fn lastest_json() -> &'static str {
     ]"#
 }
 
-pub fn get_json() -> &'static str {
+pub fn api_single_item() -> &'static str {
     r#"[
         {
             "cusip": "91282CJQ5",
