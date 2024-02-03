@@ -1,15 +1,27 @@
 #[cfg(test)]
 use mockito;
 
-// ...
-
-// The host to be used for non-test (production) compilation
-#[cfg(not(test))]
-let host = "http://example.com";
-
-// The host to be used in test com ilation
 #[cfg(test)]
-let host = &mockito::server_url();
+use mockito;
 
-let url = format!("{}/endpoint", host);
-let text = reqwest::get(&url)?.text()?;
+#[cfg(not(test))]
+const CATS_URL: &str = "https://cat-fact.herokuapp.com";
+
+#[cfg(not(test))]
+const TODO_URL: &str = "https://jsonplaceholder.typicode.com";
+
+fn get_cats_url() -> String {
+    #[cfg(not(test))]
+    let url = format!("{}/facts/random", CATS_URL);
+    #[cfg(test)]
+    let url = format!("{}/facts/random", mockito::server_url());
+    url
+}
+
+fn get_todo_url() -> String {
+    #[cfg(not(test))]
+    let url = format!("{}/todos/1", TODO_URL);
+    #[cfg(test)]
+    let url = format!("{}/todos/1", mockito::server_url());
+    url
+}

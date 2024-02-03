@@ -1,8 +1,9 @@
 //! # The test suite.
 //!
 //!
-mod fixture;
 extern crate serde;
+
+pub(crate) mod fixture;
 
 use chrono::DateTime;
 use crate::treasury::{tests::fixture::MULTIPLE_ITEMS_COUNT, Treasury};

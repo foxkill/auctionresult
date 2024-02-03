@@ -1336,7 +1336,7 @@ pub(crate) fn api_multiple_items() -> &'static str {
     ]"#
 }
 
-pub fn api_single_item() -> &'static str {
+pub(crate) fn api_single_item() -> &'static str {
     r#"[
         {
             "cusip": "91282CJQ5",
