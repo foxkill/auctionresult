@@ -1,14 +1,14 @@
 //! # Treasury
 //! 
 //! 
-// Make usable for this module.
 
+// make usable.
 mod deserializer;
 // Make visible
 pub mod treasury_type;
 
-use mockall::automock;
 use serde::Deserialize;
+
 use deserializer::f64_from_string;
 use deserializer::bool_from_string;
 

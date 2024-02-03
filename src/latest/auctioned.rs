@@ -1,6 +1,4 @@
 //! # Module for retrieving the lastest auction results.
-#[cfg(test)]
-use mockall::automock;
 // #![allow(unused)]
 use reqwest::blocking::Client;
 
@@ -14,7 +12,6 @@ pub struct Latest {
     treasury_type: TreasuryType,
 }
 
-#[cfg_attr(test, automock)]
 impl TreasuryAccess for Latest {
     fn get(&self) -> Vec<Treasury> {
         let client = Client::new();
@@ -59,12 +56,12 @@ mod tests {
 
     #[test]
     fn get_lastest_auctions() {
-        let mut latest = MockLatest::new();
-        latest
-            .expect_get()
-            .returning(|| vec![Treasury::default()]);
+        // let mut latest = MockLatest::new();
+        // latest
+        //     .expect_get()
+        //     .returning(|| vec![Treasury::default()]);
 
-        let result = latest.get();
-        println!("{result:#?}");
+        let latest = Latest::new(TreasuryType::Bill, 0).get();
+        println!("{latest:#?}");
     }
 }
