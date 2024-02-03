@@ -1,15 +1,17 @@
 //! # Treasury
 //! 
 //! 
-use serde::Deserialize;
-// use serde_with::{serde_as, DisplayFromStr};
-
+// Make usable for this module.
 mod deserializer;
+// Make visible
 pub mod treasury_type;
 
+use serde::Deserialize;
 use deserializer::f64_from_string;
 use deserializer::bool_from_string;
-use treasury_type::TreasuryType;
+
+// Re-Export
+pub use treasury_type::TreasuryType;
 
 #[allow(dead_code)]
 #[derive(Debug, Default, Deserialize)]

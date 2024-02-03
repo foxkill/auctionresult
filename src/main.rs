@@ -3,13 +3,13 @@
 
 mod treasury;
 mod macros;
-mod latest;
+pub mod latest;
 
-use treasury::Treasury;
+use crate::{latest::Latest, treasury::TreasuryType};
 
-use crate::{latest::Latest, treasury::treasury_type::TreasuryType};
 
 fn main() {
     // let tr = Treasury::default();
-    let _ = Latest::new(TreasuryType::Null, 0);
+    let l = Latest::new(TreasuryType::Bill, 0);
+    println!("{l:#?}")
 }

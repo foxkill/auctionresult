@@ -10,7 +10,7 @@ use std::str::FromStr;
 pub struct ConvertError;
 
 #[derive(Debug, PartialEq, Deserialize, Default)]
-pub(crate) enum TreasuryType {
+pub enum TreasuryType {
     Bill,
     Note,
     Bond,
