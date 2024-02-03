@@ -2,10 +2,12 @@
 //! 
 //! 
 // Make usable for this module.
+
 mod deserializer;
 // Make visible
 pub mod treasury_type;
 
+use mockall::automock;
 use serde::Deserialize;
 use deserializer::f64_from_string;
 use deserializer::bool_from_string;
@@ -46,6 +48,11 @@ impl Treasury {
     pub fn cusip(&self) -> String {
         self.cusip.to_string()
     }    
+}
+
+pub trait TreasuryAccess {
+    fn get(&self) -> Vec<Treasury>;
+    fn url(&self) -> String;
 }
 
 #[cfg(test)]

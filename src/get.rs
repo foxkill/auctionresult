@@ -1,7 +1,8 @@
 //! # The Get Module
 
+
 use reqwest::blocking::Client;
-use crate::Treasury;
+use crate::{treasury::TreasuryAccess, Treasury};
 
 static TREASURIES_URL: &str = "https://www.treasurydirect.gov/TA_WS/securities/search";
 
@@ -9,20 +10,14 @@ pub struct Get {
     cusip: String,
 }
 
-impl Get {
-    pub fn new(cusip: &str) -> Self  {
-        Self { cusip: cusip.to_owned() }
-    }
-
-    pub fn get(&self) -> Treasury {
+impl TreasuryAccess for Get {
+    fn get(&self) -> Vec<Treasury> {
         let client = Client::new();
         let Ok(resp) = client.get(self.url()).send() else {
-            return Treasury::default();
+            return vec![Treasury::default()]
         };
 
-        let mut items: Vec<Treasury> = resp.json().unwrap_or(vec![Treasury::default()]);
-
-        items.remove(0)
+        resp.json().unwrap_or(vec![Treasury::default()])
     }
 
     fn url(&self) -> String {
@@ -30,9 +25,15 @@ impl Get {
     }
 }
 
+impl Get {
+    pub fn new(cusip: &str) -> Self  {
+        Self { cusip: cusip.to_owned() }
+    }
+}
+
 #[cfg(test)]
 mod tests {
-    use crate::get::{Get, TREASURIES_URL};
+    use super::*;
 
     const CUSIP: &str = "91282CJQ5";
     #[test]
@@ -45,6 +46,6 @@ mod tests {
     fn get() {
         let g = Get::new(CUSIP);
         let v = g.get();
-        assert_eq!(CUSIP, v.cusip());
+        assert_eq!(CUSIP, v[0].cusip());
     }
 }

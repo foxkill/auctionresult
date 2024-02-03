@@ -27,3 +27,17 @@ fn deserialize_multiple_items() {
     });
     assert!(result.len() == MULTIPLE_ITEMS_COUNT);
 }
+
+#[test]
+fn deserialize_single_item() {
+    let fxt = fixture::api_single_item();
+    let result: Vec<Treasury> = serde_json::from_str(fxt).unwrap();
+    assert!(result.len() == 1);
+}
+
+#[test]
+fn deserialize_empty_item() {
+    let fxt = fixture::api_empty_items();
+    let result: Vec<Treasury> = serde_json::from_str(fxt).unwrap();
+    assert!(result.len() == 1);
+}
