@@ -1,6 +1,6 @@
-//! Fixture file
-//!
-//!
+//! Represents the multipe responses coming from the API.
+//
+//
 pub(crate) const MULTIPLE_ITEMS_COUNT: usize = 11;
 
 pub(crate) fn api_empty_items() -> &'static str {

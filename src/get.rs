@@ -54,6 +54,9 @@ impl Get {
 #[cfg(test)]
 mod tests {
     use mockito::Matcher;
+
+    use crate::tests::fixture::api_single_item;
+
     use super::*;
 
     const CUSIP: &str = "91282CJQ5";
