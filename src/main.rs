@@ -1,15 +1,12 @@
 //! # The Auction Result App
 // 
 
-mod treasury;
-mod macros;
-pub mod latest;
-
-use crate::{latest::Latest, treasury::TreasuryType};
+use auctionresult::{Latest, Treasury, TreasuryType};
 
 
 fn main() {
-    // let tr = Treasury::default();
     let l = Latest::new(TreasuryType::Bill, 0);
-    println!("{l:#?}")
+    let r: Vec<Treasury> = l.get();
+
+    println!("{:#?}", r);
 }

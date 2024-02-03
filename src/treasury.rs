@@ -42,5 +42,11 @@ pub struct Treasury {
     total_accepted: f64,
 }
 
+impl Treasury {
+    pub fn cusip(&self) -> String {
+        self.cusip.to_string()
+    }    
+}
+
 #[cfg(test)]
 mod tests;

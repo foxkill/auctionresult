@@ -3,6 +3,14 @@
 //!
 pub(crate) const MULTIPLE_ITEMS_COUNT: usize = 11;
 
+pub(crate) fn api_empty_items() -> &'static str {
+    r#"[]"#
+}
+
+pub(crate) fn api_empty_response() -> &'static str {
+    ""
+}
+
 pub(crate) fn api_multiple_items() -> &'static str {
     r#"[
         {

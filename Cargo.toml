@@ -4,7 +4,13 @@ version = "0.1.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+#[[bin]]
+#name = "hallo"
+#path = "src/main.rs"
 
+#[lib]
+#name = "hallo"
+#path = "src/lib.rs"
 [dependencies]
 chrono = { version = "0.4.33", default-features = false, features = ["alloc", "iana-time-zone", "std", "wasmbind"] }
 enum_stringify = "0.3.0"
