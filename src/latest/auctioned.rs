@@ -20,11 +20,9 @@ impl TreasuryAccess for Latest {
         let url = self.url();
         let handle = load(url);
 
-        let response = handle.join().unwrap_or(
+        handle.join().unwrap_or(
             vec![Treasury::default()]
-        );
-
-        response
+        )
     }
 
     fn url(&self) -> String {

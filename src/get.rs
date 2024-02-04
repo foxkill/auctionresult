@@ -24,17 +24,6 @@ impl TreasuryAccess for Get {
         let url = self.url();
 
         let handle = load(url);
-        // let handle = thread::spawn(move || {
-        //     let Ok(resp) = client.get(url).send() else {
-        //         return def;
-        //     };
-        //     resp.json().unwrap_or(def)
-        // });
-
-        // let url = self.url();
-        // let Ok(resp) = client.get(url).send() else {
-        //     return vec![Treasury::default()];
-        // };
 
         let resp = handle.join().unwrap_or(def);
         resp
