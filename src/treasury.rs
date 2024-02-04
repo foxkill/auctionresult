@@ -6,6 +6,7 @@
 mod deserializer;
 // Make visible
 pub mod treasury_type;
+pub mod load;
 
 use serde::Deserialize;
 
@@ -14,6 +15,7 @@ use deserializer::bool_from_string;
 
 // Re-Export
 pub use treasury_type::TreasuryType;
+pub use load::load;
 
 #[allow(dead_code)]
 #[derive(Debug, Default, Deserialize)]

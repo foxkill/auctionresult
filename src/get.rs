@@ -1,6 +1,5 @@
 //! # The Get Module
-use crate::{treasury::TreasuryAccess, Treasury};
-use reqwest::blocking::Client;
+use crate::{treasury::{load::load, TreasuryAccess}, Treasury};
 
 #[cfg(test)]
 static URL: &str = "";
@@ -15,19 +14,30 @@ pub struct Get {
     url: String,
 }
 
+pub fn get(cusip: &str) -> Get {
+    Get::new(cusip)
+}
+
 impl TreasuryAccess for Get {
     fn get(&self) -> Vec<Treasury> {
-        let client = Client::new();
-
+        let def = vec![Treasury::default()];
         let url = self.url();
-        let Ok(resp) = client.get(url).send() else {
-            return vec![Treasury::default()];
-        };
 
-        // resp.json().unwrap_or(vec![Treasury::default()])
-        let j = resp.json().unwrap();
+        let handle = load(url);
+        // let handle = thread::spawn(move || {
+        //     let Ok(resp) = client.get(url).send() else {
+        //         return def;
+        //     };
+        //     resp.json().unwrap_or(def)
+        // });
 
-        j
+        // let url = self.url();
+        // let Ok(resp) = client.get(url).send() else {
+        //     return vec![Treasury::default()];
+        // };
+
+        let resp = handle.join().unwrap_or(def);
+        resp
     }
 
     fn url(&self) -> String {
@@ -41,11 +51,12 @@ impl TreasuryAccess for Get {
 impl Get {
     pub fn new(cusip: &str) -> Self {
         Self {
-            cusip: cusip.to_owned(),
+            cusip: cusip.to_string(),
             url: URL.to_string(),
         }
     }
 
+    #[cfg(test)]
     fn set_host(&mut self, url: impl Into<String>) {
         self.url = url.into();
     }
@@ -53,15 +64,14 @@ impl Get {
 
 #[cfg(test)]
 mod tests {
-    use mockito::Matcher;
-
-    use crate::tests::fixture::api_single_item;
-
     use super::*;
+    use crate::tests::fixture::api_single_item;
+    use mockito::Matcher;
 
     const CUSIP: &str = "91282CJQ5";
     #[test]
-    fn url() {
+    fn it_should_correctly_build_an_url() {
+        // if cfg!(target_os = "windows") {
         let g = Get::new(CUSIP);
         assert_eq!(
             format!("{}?cusip={}&format=json", TREASURIES_URL, CUSIP),
@@ -70,7 +80,7 @@ mod tests {
     }
 
     #[test]
-    fn get() {
+    fn it_should_correctly_call_get() {
         let mut server = mockito::Server::new();
         let host = server.url();
 

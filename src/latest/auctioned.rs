@@ -1,8 +1,6 @@
 //! # Module for retrieving the lastest auction results.
 // #![allow(unused)]
-use reqwest::blocking::Client;
-
-use crate::treasury::{treasury_type::TreasuryType, Treasury, TreasuryAccess};
+use crate::treasury::{load, treasury_type::TreasuryType, Treasury, TreasuryAccess};
 
 static AUCTIONED_URL: &str = "https://www.treasurydirect.gov/TA_WS/securities/auctioned";
 
@@ -14,12 +12,14 @@ pub struct Latest {
 
 impl TreasuryAccess for Latest {
     fn get(&self) -> Vec<Treasury> {
-        let client = Client::new();
-        let Ok(resp) = client.get(self.url()).send() else {
-            return vec![Treasury::default()];
-        };
+        let url = self.url();
+        let handle = load(url);
 
-        resp.json().unwrap_or(vec![Treasury::default()])
+        let response = handle.join().unwrap_or(
+            vec![Treasury::default()]
+        );
+
+        response
     }
 
     fn url(&self) -> String {
@@ -55,12 +55,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn get_lastest_auctions() {
-        // let mut latest = MockLatest::new();
-        // latest
-        //     .expect_get()
-        //     .returning(|| vec![Treasury::default()]);
-
+    fn it_should_return_the_lastest_auctions() {
         let latest = Latest::new(TreasuryType::Bill, 0).get();
         println!("{latest:#?}");
     }
