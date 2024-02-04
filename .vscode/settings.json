@@ -16,5 +16,6 @@
     "peacock.remoteColor": "#ff3d00",
     "rust-analyzer.linkedProjects": [
         "./Cargo.toml"
-    ]
+    ],
+    "rust-analyzer.showUnlinkedFileNotification": false
 }
