@@ -7,6 +7,7 @@ mod deserializer;
 // Make visible
 pub mod treasury_type;
 pub mod load;
+pub mod print;
 
 use chrono::NaiveDateTime;
 use serde::Deserialize;
