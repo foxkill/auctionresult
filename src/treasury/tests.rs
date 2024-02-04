@@ -3,18 +3,29 @@
 //!
 extern crate serde;
 
-use chrono::DateTime;
+use chrono::{DateTime, NaiveDateTime};
 
-use crate::{tests::fixture::{api_empty_items, api_empty_response, api_multiple_items, api_single_item, MULTIPLE_ITEMS_COUNT}, Treasury};
+use crate::{
+    tests::fixture::{
+        api_empty_items, api_empty_response, api_multiple_items, api_single_item,
+        MULTIPLE_ITEMS_COUNT,
+    },
+    Treasury,
+};
 
 #[test]
-fn date_time_parse() {
+fn it_should_correctly_parse_date_time_formats() {
+    let fmt = "%Y-%m-%dT%H:%M:%S";
     let mut md = String::from("2025-12-31T00:00:00");
+    let naive_date = md.parse::<NaiveDateTime>().unwrap();
+    let dt = DateTime::parse_from_str(&md, fmt);
 
-    let dt = DateTime::parse_from_str(&md, "%Y-%m-%dT%H:%M:%S");
     md.push_str("+00:00");
     let dt_json = DateTime::parse_from_rfc3339(&md);
-    // println!("{dt:?} {dt_json:?}");
+
+    // println!("{naive_date:?} {dt_json:?}");
+
+    assert_eq!(format!("{}", naive_date.format("%d.%m.%Y")), "31.12.2025");
     assert!(dt.is_err());
     assert!(dt_json.is_ok());
 }
@@ -22,9 +33,8 @@ fn date_time_parse() {
 #[test]
 fn deserialize_multiple_items() {
     let fxt = api_multiple_items();
-    let result: Vec<Treasury> = serde_json::from_str(fxt).unwrap_or_else(|_| {
-        vec![Treasury::default()]
-    });
+    let result: Vec<Treasury> =
+        serde_json::from_str(fxt).unwrap_or_else(|_| vec![Treasury::default()]);
     assert!(result.len() == MULTIPLE_ITEMS_COUNT);
 }
 

@@ -8,6 +8,7 @@ mod deserializer;
 pub mod treasury_type;
 pub mod load;
 
+use chrono::NaiveDateTime;
 use serde::Deserialize;
 
 use deserializer::f64_from_string;
@@ -28,8 +29,8 @@ pub struct Treasury {
     security_term : String,
     #[serde(deserialize_with = "bool_from_string")]
     reopening: bool,
-    issue_date: String,
-    maturity_date: String,
+    issue_date: NaiveDateTime,
+    maturity_date: NaiveDateTime,
     #[serde(deserialize_with = "f64_from_string")]
     high_yield: f64,
     #[serde(deserialize_with = "f64_from_string")]
@@ -45,6 +46,8 @@ pub struct Treasury {
     #[serde(deserialize_with = "f64_from_string")]
     total_accepted: f64,
 }
+// serializ_dt() must be implemented.
+// #[serde(serialize_with = "serialize_dt", skip_serializing_if  = "Option::is_none")]
 
 impl Treasury {
     pub fn cusip(&self) -> String {

@@ -13,7 +13,7 @@ edition = "2021"
 #path = "src/lib.rs"
 
 [dependencies]
-chrono = { version = "0.4.33", default-features = false, features = ["alloc", "iana-time-zone", "std", "wasmbind"] }
+chrono = { version = "0.4.33", default-features = false, features = ["alloc", "iana-time-zone", "std", "wasmbind", "serde"] }
 enum_stringify = "0.3.0"
 reqwest = { version = "0.11.24", features = ["json", "blocking"] }
 serde = { version = "1.0.196", features = ["derive"] }
