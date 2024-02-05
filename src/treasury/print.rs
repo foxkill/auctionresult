@@ -26,7 +26,7 @@ pub fn horizontally_print_out_treasury(treasuries: &Vec<Treasury>) {
     let mut table = Table::new();
     let datefmt = Treasury::get_default_date_fmt();
 
-    table.set_format(*format::consts::FORMAT_CLEAN);
+    // table.set_format(*format::consts::FORMAT_CLEAN);
     table.add_row(Row::from(Treasury::new().get_fields()));
 
     for treasury in treasuries {
