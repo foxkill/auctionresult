@@ -1,6 +1,6 @@
 //! # Module for retrieving the lastest auction results.
 // #![allow(unused)]
-use crate::treasury::{load, treasury_type::TreasuryType, Treasury, TreasuryAccess};
+use crate::treasury::{load, treasury_type::SecurityType, Treasury, TreasuryAccess};
 
 #[cfg(not(test))]
 static AUCTIONED_URL: &str = "https://www.treasurydirect.gov/TA_WS/securities/auctioned";
@@ -10,7 +10,7 @@ static AUCTIONED_URL: &str = "/securities/auctioned";
 #[derive(Debug, Default, PartialEq)]
 pub struct Latest {
     days: usize,
-    treasury_type: TreasuryType,
+    treasury_type: SecurityType,
     #[cfg(test)]
     host: String,
 }
@@ -27,7 +27,7 @@ impl TreasuryAccess for Latest {
 
     fn url(&self) -> String {
         let mut url = String::from(AUCTIONED_URL);
-        if self.treasury_type != TreasuryType::Null {
+        if self.treasury_type != SecurityType::Null {
             #[cfg(test)]
             url.insert_str(0,&self.host);
 
@@ -44,7 +44,7 @@ impl TreasuryAccess for Latest {
 }
 
 impl Latest {
-    pub fn new(treasury_type: TreasuryType, days: usize) -> Self {
+    pub fn new(treasury_type: SecurityType, days: usize) -> Self {
         Self {
             days: if days == 0 { 7 } else { days },
             treasury_type,
@@ -69,14 +69,14 @@ mod tests {
     #[test]
     fn it_should_return_the_lastest_auctions() {
         let mut server = mockito::Server::new();
-        let mut latest = Latest::new(TreasuryType::Bill, 8);
+        let mut latest = Latest::new(SecurityType::Bill, 8);
 
         latest.host = server.url();
 
         server
             .mock("GET", AUCTIONED_URL)
             .match_query(Matcher::AllOf(vec![
-                Matcher::UrlEncoded("type".into(), TreasuryType::Bill.to_string()),
+                Matcher::UrlEncoded("type".into(), SecurityType::Bill.to_string()),
                 Matcher::UrlEncoded("days".into(), "8".into()),
             ]))
             .with_body(api_multiple_items())

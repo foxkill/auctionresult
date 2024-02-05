@@ -1,7 +1,7 @@
 //! # The Auction Result App
 // 
 
-use auctionresult::{Latest, Treasury, TreasuryType};
+use auctionresult::{Latest, Treasury, SecurityType};
 
 
 fn main() {
