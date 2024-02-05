@@ -1,7 +1,7 @@
 //! # The treasury type
 //!
 //! Represents the different types of treasuries.
-
+use clap::ValueEnum;
 use core::fmt;
 use serde::Deserialize;
 use std::str::FromStr;
@@ -9,7 +9,7 @@ use std::str::FromStr;
 #[derive(Debug)]
 pub struct ConvertError;
 
-#[derive(Debug, PartialEq, Deserialize, Default)]
+#[derive(Debug, PartialEq, Deserialize, Default, Clone, ValueEnum)]
 pub enum SecurityType {
     Bill,
     Note,
