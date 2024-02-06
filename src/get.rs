@@ -88,4 +88,27 @@ mod tests {
         let v = g.get().unwrap();
         assert_eq!(CUSIP, v[0].cusip());
     }
+
+    #[test]
+    fn it_should_correctly_handle_invalid_request() {
+        let mut server = mockito::Server::new();
+        let host = server.url();
+
+        let mut g = self::get(CUSIP);
+
+        g.set_host(host);
+
+        server
+            .mock("GET", TREASURIES_URL)
+            .match_query(Matcher::AllOf(vec![
+                Matcher::UrlEncoded("cusip".into(), CUSIP.into()),
+                Matcher::UrlEncoded("format".into(), "json".into()),
+            ]))
+            .with_body(api_single_item())
+            .with_status(500)
+            .create();
+
+        let result = g.get();
+        assert!(result.is_err())
+    }
 }
