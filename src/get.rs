@@ -24,9 +24,7 @@ impl TreasuryAccess for Get {
         let url = self.url();
 
         let handle = load(url);
-
-        let resp = handle.join().unwrap_or(def);
-        resp
+        handle.join().unwrap_or(def)
     }
 
     fn url(&self) -> String {
