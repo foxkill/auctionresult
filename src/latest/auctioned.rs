@@ -1,6 +1,6 @@
 //! # Module for retrieving the lastest auction results.
 // #![allow(unused)]
-use crate::treasury::{load, treasury_type::SecurityType, Treasury, TreasuryAccess};
+use crate::treasury::{load, treasury_type::SecurityType, AuctionResult, Treasuries, TreasuryAccess};
 
 #[cfg(not(test))]
 static AUCTIONED_URL: &str = "https://www.treasurydirect.gov/TA_WS/securities/auctioned";
@@ -15,14 +15,13 @@ pub struct Latest {
     host: String,
 }
 
-impl TreasuryAccess for Latest {
-    fn get(&self) -> Vec<Treasury> {
+impl TreasuryAccess<Treasuries> for Latest {
+    fn get(&self) -> AuctionResult<Treasuries> {
         let url = self.url();
-        let handle = load(url);
+        let response = load(url)?;
 
-        handle.join().unwrap_or(
-            vec![Treasury::default()]
-        )
+        let treasuries: Treasuries = response.json()?;
+        Ok(treasuries)
     }
 
     fn url(&self) -> String {
@@ -82,7 +81,7 @@ mod tests {
             .with_body(api_multiple_items())
             .create();
 
-        let response = latest.get();
+        let response = latest.get().unwrap();
         assert_eq!(11, response.len());
     }
 }

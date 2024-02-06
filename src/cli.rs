@@ -64,7 +64,7 @@ pub fn handle_get(args: &AuctionResultParser) {
 
     let get_command = Get::new(cusip);
 
-    let response: Vec<Treasury> = get_command.get();
+    let response: Vec<Treasury> = get_command.get().unwrap();
     if args.vertical {
         vertically_print_out_treasury(&response);
     } else {
@@ -85,7 +85,7 @@ pub fn handle_latest(args: &AuctionResultParser) {
     let look_back_days = days.unwrap_or(0);
     let latest = Latest::new(security_type, look_back_days);
 
-    let response: Vec<Treasury> = latest.get();
+    let response: Vec<Treasury> = latest.get().unwrap();
     if args.vertical {
         vertically_print_out_treasury(&response);
     } else {

@@ -1,5 +1,5 @@
 //! # The Get Module
-use crate::{treasury::{load::load, TreasuryAccess}, Treasury};
+use crate::treasury::{load::load, AuctionResult, Treasuries, TreasuryAccess};
 
 #[cfg(test)]
 static URL: &str = "";
@@ -18,13 +18,14 @@ pub fn get(cusip: &str) -> Get {
     Get::new(cusip)
 }
 
-impl TreasuryAccess for Get {
-    fn get(&self) -> Vec<Treasury> {
-        let def = vec![Treasury::default()];
+impl TreasuryAccess<Treasuries> for Get {
+    fn get(&self) -> AuctionResult<Treasuries> {
+        // Check the cusip number, before using it.
         let url = self.url();
+        let response = load(url)?;
 
-        let handle = load(url);
-        handle.join().unwrap_or(def)
+        let treasuries: Treasuries = response.json()?;
+        Ok(treasuries)
     }
 
     fn url(&self) -> String {
@@ -84,7 +85,7 @@ mod tests {
             .with_body(api_single_item())
             .create();
 
-        let v = g.get();
+        let v = g.get().unwrap();
         assert_eq!(CUSIP, v[0].cusip());
     }
 }

@@ -6,6 +6,7 @@
 mod deserializer;
 
 // Make visible
+pub mod error;
 pub mod load;
 pub mod print;
 pub mod treasury_type;
@@ -19,6 +20,8 @@ use deserializer::f64_from_string;
 // Re-Export
 pub use load::load;
 pub use treasury_type::SecurityType;
+pub use error::AuctionResultError;
+
 
 const DEFAULT_SECURITY_DATE_FORMAT: &str = "%m/%d/%Y";
 
@@ -90,8 +93,11 @@ impl Treasury {
     }
 }
 
-pub trait TreasuryAccess {
-    fn get(&self) -> Vec<Treasury>;
+pub type AuctionResult<T> = std::result::Result<T, AuctionResultError>;
+pub type Treasuries = Vec<Treasury>;
+
+pub trait TreasuryAccess<T> {
+    fn get(&self) -> AuctionResult<T>;
     fn url(&self) -> String;
 }
 
