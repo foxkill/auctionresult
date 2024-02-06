@@ -2,7 +2,7 @@
 //!
 
 use super::error::AuctionResultError;
-use reqwest::{blocking::{get, Response}, StatusCode};
+use reqwest::blocking::{get, Response};
 use std::thread;
 
 /// Naive version of non blocking request.
