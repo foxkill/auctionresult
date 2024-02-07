@@ -1,5 +1,7 @@
 //! # The Get Module
-use crate::treasury::{load::load, AuctionResult, Treasuries, TreasuryAccess};
+extern crate cusip;
+use cusip as cu;
+use crate::treasury::{load::load, AuctionResult, AuctionResultError, Treasuries, TreasuryAccess};
 
 #[cfg(test)]
 static URL: &str = "";
@@ -21,6 +23,10 @@ pub fn get(cusip: &str) -> Get {
 impl TreasuryAccess<Treasuries> for Get {
     fn get(&self) -> AuctionResult<Treasuries> {
         // Check the cusip number, before using it.
+        if !cu::validate(&self.cusip) {
+            return Err(AuctionResultError::ParseError);
+        }
+
         let url = self.url();
         let response = load(url)?;
 
@@ -66,7 +72,14 @@ mod tests {
             g.url()
         );
     }
-
+    #[test]
+    fn it_should_handle_an_invalid_cusip() {
+        // if cfg!(target_os = "windows") {
+        let g = Get::new("x1");
+        
+        let result = g.get();
+        assert!(result.is_err());
+    }
     #[test]
     fn it_should_correctly_call_get() {
         let mut server = mockito::Server::new();
@@ -90,7 +103,7 @@ mod tests {
     }
 
     #[test]
-    fn it_should_correctly_handle_invalid_request() {
+    fn it_should_correctly_handle_invalid_response() {
         let mut server = mockito::Server::new();
         let host = server.url();
 
@@ -109,6 +122,20 @@ mod tests {
             .create();
 
         let result = g.get();
-        assert!(result.is_err())
+        // Handle the error via match.
+        // if let AuctionResultError::RequestError(err) = result.as_ref().unwrap_err() {
+        //     println!("{:?}", err.status());
+        // }
+        assert!(result.is_err());
+    }
+
+    #[test]
+    fn it_should_correctly_handle_a_connection_error() {
+        let mut g = self::get(CUSIP);
+        // Make sure that nothing is listening on that port.
+        g.set_host("https://localhost:12000");
+        let result = g.get();
+        println!("{result:#?}");
+        assert!(result.is_err());
     }
 }

@@ -6,7 +6,7 @@ pub mod latest;
 pub mod treasury;
 pub mod get;
 
-// Re-exports.
+// Re-exports - available modules.
 pub use latest::Latest;
 pub use get::Get;
 
