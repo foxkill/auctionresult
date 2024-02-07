@@ -9,17 +9,21 @@ use std::thread;
 pub fn load(url: impl Into<String>) -> Result<Response, AuctionResultError> {
     let url = url.into();
     let handle = thread::spawn(move || get(url));
-    let thread_result = handle.join();
 
     // Joining the thread failed.
-    let Ok(tr) = thread_result else {
-        return Err(AuctionResultError::RequestErrorDyn(thread_result.unwrap_err()));
-    };
+    let thread_result = handle.join()?;
+
+    // // Joining the thread failed.
+    // let Ok(tr) = thread_result else {
+    //     return Err(AuctionResultError::RequestErrorDyn(thread_result.unwrap_err()));
+    // };
 
     // Invalid server response.
-    let Ok(response) = tr else {
-        return Err(AuctionResultError::RequestError(tr.unwrap_err()));
-    };
+    let response = thread_result?;
+
+    // let Ok(response) = thread_result else {
+    //     return Err(AuctionResultError::RequestError(thread_result.unwrap_err()));
+    // };
 
     response.error_for_status().map_err(AuctionResultError::RequestError)
 }
