@@ -16,7 +16,7 @@ fn main() {
         AuctionResultCommands::Get { cusip: _ } => {
             handle_get(&args);
         }
-        AuctionResultCommands::Latest { sectype: _, days: _ } => {
+        AuctionResultCommands::Latest { sectype: _, days: _, tenor: _} => {
             handle_latest(&args);
         }
     }

@@ -25,5 +25,5 @@ pub fn load(url: impl Into<String>) -> Result<Response, AuctionResultError> {
     //     return Err(AuctionResultError::RequestError(thread_result.unwrap_err()));
     // };
 
-    response.error_for_status().map_err(AuctionResultError::RequestError)
+    response.error_for_status().map_err(AuctionResultError::Request)
 }

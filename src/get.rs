@@ -16,15 +16,11 @@ pub struct Get {
     url: String,
 }
 
-pub fn get(cusip: &str) -> Get {
-    Get::new(cusip)
-}
-
 impl TreasuryAccess<Treasuries> for Get {
     fn get(&self) -> AuctionResult<Treasuries> {
         // Check the cusip number, before using it.
         if !cu::validate(&self.cusip) {
-            return Err(AuctionResultError::ParseError);
+            return Err(AuctionResultError::Parse);
         }
 
         let url = self.url();
@@ -107,7 +103,7 @@ mod tests {
         let mut server = mockito::Server::new();
         let host = server.url();
 
-        let mut g = self::get(CUSIP);
+        let mut g = Get::new(CUSIP);
 
         g.set_host(host);
 
@@ -131,7 +127,7 @@ mod tests {
 
     #[test]
     fn it_should_correctly_handle_a_connection_error() {
-        let mut g = self::get(CUSIP);
+        let mut g = Get::new(CUSIP);
         // Make sure that nothing is listening on that port.
         g.set_host("https://localhost:12000");
         let result = g.get();

@@ -4,19 +4,20 @@ use std::any::Any;
 
 #[derive(Debug)]
 pub enum AuctionResultError {
-    RequestError(reqwest::Error),
-    RequestErrorDyn(Box<dyn Any + Send>),
-    ParseError,
+    Request(reqwest::Error),
+    RequestDyn(Box<dyn Any + Send>),
+    // Could not parse cusip number.
+    Parse,
 }
 
-impl std::convert::From<reqwest::Error> for AuctionResultError {
+impl From<reqwest::Error> for AuctionResultError {
     fn from(value: reqwest::Error) -> Self {
-        AuctionResultError::RequestError(value)
+        AuctionResultError::Request(value)
     }
 }
 
 impl From<Box<dyn Any + Send>> for AuctionResultError {
     fn from(value: Box<dyn Any + Send>) -> Self {
-       AuctionResultError::RequestErrorDyn(value) 
+       AuctionResultError::RequestDyn(value) 
     }
 }
