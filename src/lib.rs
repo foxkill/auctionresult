@@ -5,6 +5,7 @@ mod tests;
 pub mod latest;
 pub mod treasury;
 pub mod get;
+pub mod tenor;
 
 // Re-exports - available modules.
 pub use latest::Latest;
