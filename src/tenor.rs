@@ -25,6 +25,9 @@ impl std::fmt::Display for Tenor {
 
 impl Tenor {
     pub fn parse(s: &str) -> AuctionResult<Self> {
+        if s.is_empty() {
+            return Ok(Tenor::default());
+        }
         // Guard
         let Some(captures) = re!(RE).captures(s) else {
             return Err(AuctionResultError::ParseCusip);
