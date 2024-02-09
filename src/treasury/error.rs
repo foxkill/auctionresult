@@ -7,7 +7,8 @@ pub enum AuctionResultError {
     Request(reqwest::Error),
     RequestDyn(Box<dyn Any + Send>),
     // Could not parse cusip number.
-    Parse,
+    ParseCusip,
+    ParseTenor,
 }
 
 impl From<reqwest::Error> for AuctionResultError {

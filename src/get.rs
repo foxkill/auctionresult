@@ -20,7 +20,7 @@ impl TreasuryAccess<Treasuries> for Get {
     fn get(&self) -> AuctionResult<Treasuries> {
         // Check the cusip number, before using it.
         if !cu::validate(&self.cusip) {
-            return Err(AuctionResultError::Parse);
+            return Err(AuctionResultError::ParseCusip);
         }
 
         let url = self.url();
