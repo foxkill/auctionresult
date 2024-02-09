@@ -91,6 +91,10 @@ impl Treasury {
     pub fn get_default_date_fmt() -> &'static str {
         DEFAULT_SECURITY_DATE_FORMAT
     }
+
+    pub fn get_term(&self) -> String {
+        self.term.to_owned()
+    }
 }
 
 pub type AuctionResult<T> = std::result::Result<T, AuctionResultError>;
