@@ -5,9 +5,9 @@ use std::process::exit;
 use std::str::FromStr;
 
 use auctionresult::tenor::Tenor;
-use auctionresult::treasury::print::security_vprint;
+use auctionresult::treasury::print::security_print;
 use auctionresult::treasury::AuctionResultError;
-use auctionresult::security_print;
+use auctionresult::security_vprint;
 use auctionresult::Get;
 use auctionresult::Latest;
 use auctionresult::SecurityType;
@@ -99,9 +99,9 @@ pub fn handle_get(args: &AuctionResultParser) {
     };
 
     if args.vertical {
-        security_print(&treasuries);
-    } else {
         security_vprint(&treasuries);
+    } else {
+        security_print(&treasuries);
     }
 }
 
@@ -120,8 +120,11 @@ pub fn handle_latest(args: &AuctionResultParser) {
     let tenor_str = tenor.as_ref().unwrap_or(&default_tenor);
 
     let Ok(tenor) = Tenor::parse(tenor_str) else {
+        println!("Error parsing tenor option!");
         exit(4);
     };
+
+    // println!("{}", tenor);
 
     let latest_command = Latest::new(security_type, look_back_days, tenor);
 
@@ -135,7 +138,7 @@ pub fn handle_latest(args: &AuctionResultParser) {
     };
     
     match args.vertical {
-        false => security_print(&securities),
         true => security_vprint(&securities),
+        false => security_print(&securities),
     }
 }

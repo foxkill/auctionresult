@@ -14,4 +14,4 @@ pub use get::Get;
 pub use treasury::Treasury;
 pub use treasury::SecurityType;
 pub use treasury::TreasuryAccess;
-pub use treasury::print::security_print;
+pub use treasury::print::security_vprint;
