@@ -4,9 +4,10 @@
 use std::process::exit;
 use std::str::FromStr;
 
-use auctionresult::treasury::print::horizontally_print_out_treasury;
+use auctionresult::tenor::Tenor;
+use auctionresult::treasury::print::security_vprint;
 use auctionresult::treasury::AuctionResultError;
-use auctionresult::vertically_print_out_treasury;
+use auctionresult::security_print;
 use auctionresult::Get;
 use auctionresult::Latest;
 use auctionresult::SecurityType;
@@ -70,10 +71,14 @@ fn handle_error(e: AuctionResultError) -> i32 {
             println!("Invalid dynamic request");
             2
         },
-        AuctionResultError::Parse => {
-            println!("Could not parse cusip number.");
+            AuctionResultError::ParseCusip => {
+                println!("Could not parse cusip number.");
             3
-        }
+        },
+        AuctionResultError::ParseTenor => {
+            println!("Could not parse tenor.");
+            4
+        },
     }
 }
 
@@ -94,9 +99,9 @@ pub fn handle_get(args: &AuctionResultParser) {
     };
 
     if args.vertical {
-        vertically_print_out_treasury(&treasuries);
+        security_print(&treasuries);
     } else {
-        horizontally_print_out_treasury(&treasuries);
+        security_vprint(&treasuries);
     }
 }
 
@@ -112,10 +117,13 @@ pub fn handle_latest(args: &AuctionResultParser) {
 
     let look_back_days = days.unwrap_or(0);
     let default_tenor = String::from("");
-    let tenor = tenor.as_ref().unwrap_or(&default_tenor);
+    let tenor_str = tenor.as_ref().unwrap_or(&default_tenor);
 
-    println!("{}", tenor);
-    let latest_command = Latest::new(security_type, look_back_days);
+    let Ok(tenor) = Tenor::parse(tenor_str) else {
+        exit(4);
+    };
+
+    let latest_command = Latest::new(security_type, look_back_days, tenor);
 
     let response = latest_command.get();
 
@@ -126,9 +134,8 @@ pub fn handle_latest(args: &AuctionResultParser) {
         }
     };
     
-    if args.vertical {
-        vertically_print_out_treasury(&securities);
-    } else {
-        horizontally_print_out_treasury(&securities);
+    match args.vertical {
+        false => security_print(&securities),
+        true => security_vprint(&securities),
     }
 }
