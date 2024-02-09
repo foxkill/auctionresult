@@ -21,7 +21,7 @@ use prettytable::{
 // High Yield:      1.573%
 // Interest Rate:   1.500%
 
-pub fn horizontally_print_out_treasury(treasuries: &Vec<Treasury>) {
+pub fn security_vprint(treasuries: &Vec<Treasury>) {
     let mut f = numfmt::Formatter::default();
     let mut table = Table::new();
     let datefmt = Treasury::get_default_date_fmt();
@@ -73,7 +73,7 @@ pub fn horizontally_print_out_treasury(treasuries: &Vec<Treasury>) {
     table.printstd()
 }
 
-pub fn vertically_print_out_treasury(treasuries: &Vec<Treasury>) {
+pub fn security_print(treasuries: &Vec<Treasury>) {
     let mut f = numfmt::Formatter::default();
     let mut table = Table::new();
     let datefmt = Treasury::get_default_date_fmt();
@@ -121,13 +121,13 @@ mod tests {
         let data = api_multiple_items();
         let treasuries: Vec<Treasury> = serde_json::from_str(data).unwrap();
 
-        horizontally_print_out_treasury(&treasuries);
+        security_vprint(&treasuries);
     }
     #[test]
     fn it_should_print_out_treasury_vertical() {
         let data = api_multiple_items();
         let treasuries: Vec<Treasury> = serde_json::from_str(data).unwrap();
 
-        vertically_print_out_treasury(&treasuries);
+        security_print(&treasuries);
     }
 }
