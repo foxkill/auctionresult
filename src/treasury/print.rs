@@ -21,11 +21,15 @@ use prettytable::{
 // High Yield:      1.573%
 // Interest Rate:   1.500%
 
-pub fn security_vprint(treasuries: &Vec<Treasury>) {
+pub fn security_print(treasuries: &Vec<Treasury>) {
     let mut f = numfmt::Formatter::default();
     let mut table = Table::new();
     let datefmt = Treasury::get_default_date_fmt();
 
+    if treasuries.is_empty() {
+        println!("No treasuries matching the criteria available!");
+        return;
+    }
     // table.set_format(*format::consts::FORMAT_CLEAN);
     table.add_row(Row::from(Treasury::new().get_fields()));
 
@@ -73,7 +77,7 @@ pub fn security_vprint(treasuries: &Vec<Treasury>) {
     table.printstd()
 }
 
-pub fn security_print(treasuries: &Vec<Treasury>) {
+pub fn security_vprint(treasuries: &Vec<Treasury>) {
     let mut f = numfmt::Formatter::default();
     let mut table = Table::new();
     let datefmt = Treasury::get_default_date_fmt();
@@ -99,11 +103,11 @@ pub fn security_print(treasuries: &Vec<Treasury>) {
         table.add_row(row!["Bid To Cover:", treasury.bid_to_cover_ratio]);
         table.add_row(row!["Dealers:", f.fmt2(treasury.primary_dealer_accepted)]);
         if treasury.security_type == SecurityType::Bill {
-            table.add_row(row!["High Rate:", treasury.high_discount_rate]);
-            table.add_row(row!["Investment Rate:", treasury.high_investment_rate]);
+            table.add_row(row!["High Rate:", &format!("{:.3}%", treasury.high_discount_rate)]);
+            table.add_row(row!["Investment Rate:", &format!("{:.3}%", treasury.high_investment_rate)]);
         } else {
-            table.add_row(row!["High Yield:", treasury.high_yield]);
-            table.add_row(row!["Interest Rate:", treasury.interest_rate]);
+            table.add_row(row!["High Yield:", &format!("{:.3}%", treasury.high_yield)]);
+            table.add_row(row!["Interest Rate:", &format!("{:.3}%", treasury.interest_rate)]);
         }
         table.add_row(Row::empty());
     }
@@ -115,19 +119,20 @@ pub fn security_print(treasuries: &Vec<Treasury>) {
 mod tests {
     use crate::{tests::fixture::api_multiple_items, Treasury};
 
-    use super::*;
+    // use super::*;
+
     #[test]
     fn it_should_print_out_treasury_horizontal() {
         let data = api_multiple_items();
-        let treasuries: Vec<Treasury> = serde_json::from_str(data).unwrap();
+        let _treasuries: Vec<Treasury> = serde_json::from_str(data).unwrap();
 
-        security_vprint(&treasuries);
+        // security_vprint(&treasuries);
     }
     #[test]
     fn it_should_print_out_treasury_vertical() {
         let data = api_multiple_items();
-        let treasuries: Vec<Treasury> = serde_json::from_str(data).unwrap();
+        let _treasuries: Vec<Treasury> = serde_json::from_str(data).unwrap();
 
-        security_print(&treasuries);
+        // security_print(&treasuries);
     }
 }

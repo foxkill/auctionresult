@@ -9,7 +9,7 @@ mod deserializer;
 pub mod error;
 pub mod load;
 pub mod print;
-pub mod treasury_type;
+pub mod security_type;
 
 use chrono::NaiveDateTime;
 use serde::Deserialize;
@@ -19,7 +19,7 @@ use deserializer::f64_from_string;
 
 // Re-Export
 pub use load::load;
-pub use treasury_type::SecurityType;
+pub use security_type::SecurityType;
 pub use error::AuctionResultError;
 
 
@@ -34,6 +34,7 @@ pub struct Treasury {
     security_type: SecurityType,
     term: String,
     security_term: String,
+    original_security_term: String,
     #[serde(deserialize_with = "bool_from_string")]
     reopening: bool,
     issue_date: NaiveDateTime,
@@ -94,6 +95,14 @@ impl Treasury {
 
     pub fn get_term(&self) -> String {
         self.term.to_owned()
+    }
+
+    pub fn get_security_term(&self) -> String {
+        self.security_term.to_owned()
+    }
+    
+    pub fn get_original_security_term(&self) -> String {
+        self.original_security_term.to_owned()
     }
 }
 

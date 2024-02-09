@@ -2,7 +2,7 @@
 // #![allow(unused)]
 use crate::{
     tenor::Tenor,
-    treasury::{load, treasury_type::SecurityType, AuctionResult, Treasuries, TreasuryAccess},
+    treasury::{load, security_type::SecurityType, AuctionResult, Treasuries, TreasuryAccess},
 };
 
 #[cfg(not(test))]
@@ -25,13 +25,18 @@ impl TreasuryAccess<Treasuries> for Latest {
         let response = load(url)?;
 
         let treasuries: Treasuries = response.json()?;
+        let compare_to = self.tenor.to_string();
 
         Ok(if self.tenor.is_empty() {
             treasuries
         } else {
             treasuries
                 .into_iter()
-                .filter(|t| *t.get_term() == self.tenor.to_string())
+                .filter(|t| { 
+                    *t.get_term() == compare_to ||
+                    *t.get_security_term() == compare_to ||
+                    *t.get_original_security_term() == compare_to
+                })
                 .collect::<Treasuries>()
         })
     }
