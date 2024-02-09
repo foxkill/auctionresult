@@ -23,8 +23,6 @@ fn it_should_correctly_parse_date_time_formats() {
     md.push_str("+00:00");
     let dt_json = DateTime::parse_from_rfc3339(&md);
 
-    // println!("{naive_date:?} {dt_json:?}");
-
     assert_eq!(format!("{}", naive_date.format("%d.%m.%Y")), "31.12.2025");
     assert!(dt.is_err());
     assert!(dt_json.is_ok());
