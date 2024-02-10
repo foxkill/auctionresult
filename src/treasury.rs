@@ -29,28 +29,52 @@ const DEFAULT_SECURITY_DATE_FORMAT: &str = "%m/%d/%Y";
 #[derive(Debug, Default, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Treasury {
+    // 1
     cusip: String,
+    // 2
+    issue_date: NaiveDateTime,
+    // 3
     #[serde(rename(deserialize = "type"))]
     security_type: SecurityType,
-    term: String,
+    // 4
     security_term: String,
-    original_security_term: String,
-    #[serde(deserialize_with = "bool_from_string")]
-    reopening: bool,
-    issue_date: NaiveDateTime,
+    // 5
     maturity_date: NaiveDateTime,
-    #[serde(deserialize_with = "f64_from_string")]
-    high_yield: f64,
+    // 6
     #[serde(deserialize_with = "f64_from_string")]
     interest_rate: f64,
-    #[serde(deserialize_with = "f64_from_string")]
-    high_discount_rate: f64,
-    #[serde(deserialize_with = "f64_from_string")]
-    high_investment_rate: f64,
-    #[serde(deserialize_with = "f64_from_string")]
-    primary_dealer_accepted: f64,
+    // 28
     #[serde(deserialize_with = "f64_from_string")]
     bid_to_cover_ratio: f64,
+    // 35
+    #[serde(deserialize_with = "f64_from_string")]
+    competitive_accepted: f64,
+    // 42
+    #[serde(deserialize_with = "f64_from_string")]
+    direct_bidder_accepted: f64,
+    // 53
+    #[serde(deserialize_with = "f64_from_string")]
+    high_discount_rate: f64,
+    // 54
+    #[serde(deserialize_with = "f64_from_string")]
+    high_investment_rate: f64,
+    // 57
+    #[serde(deserialize_with = "f64_from_string")]
+    high_yield: f64,
+    // 59
+    #[serde(deserialize_with = "f64_from_string")]
+    indirect_bidder_accepted: f64,
+    // 84
+    original_security_term: String,
+    // 90 
+    #[serde(deserialize_with = "f64_from_string")]
+    primary_dealer_accepted: f64,
+    // 92
+    #[serde(deserialize_with = "bool_from_string")]
+    reopening: bool,
+    // 103
+    term: String,
+    // 106
     #[serde(deserialize_with = "f64_from_string")]
     total_accepted: f64,
 }
@@ -75,7 +99,9 @@ impl Treasury {
             "Issue Date",
             "Maturity Date",
             "Bid To Cover",
-            "Dealers"
+            "Dealers %",
+            "Directs %",
+            "Indirects %",
         ];
 
         if self.security_type == SecurityType::Bill {
@@ -103,6 +129,18 @@ impl Treasury {
     
     pub fn get_original_security_term(&self) -> String {
         self.original_security_term.to_owned()
+    }
+
+    pub fn get_percentage_debt_purchased_by_dealers(&self) -> f64 {
+        (self.primary_dealer_accepted / self.competitive_accepted) * 100.0
+    }
+
+    pub fn get_percentage_debt_purchased_by_directs(&self) -> f64 {
+        (self.direct_bidder_accepted / self.competitive_accepted) * 100.0
+    }
+
+    pub fn get_percentage_debt_purchased_by_indirects(&self) -> f64 {
+        (self.indirect_bidder_accepted / self.competitive_accepted) * 100.0
     }
 }
 
