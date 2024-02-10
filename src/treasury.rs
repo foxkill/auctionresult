@@ -14,6 +14,7 @@ pub mod security_type;
 use chrono::NaiveDateTime;
 use serde::Deserialize;
 
+// Own serializers for special treasury specific types.
 use deserializer::bool_from_string;
 use deserializer::f64_from_string;
 
@@ -86,10 +87,12 @@ impl Treasury {
         Treasury::default()
     }
 
+    /// Return the CUSIP number of the treasury.
     pub fn cusip(&self) -> String {
         self.cusip.to_string()
     }
 
+    /// Return the field headers to construct the output of the treasury.
     pub fn get_fields<'a>(&self) -> Vec<&'a str> {
         let mut fields = vec![
             "Security Term",
@@ -115,38 +118,49 @@ impl Treasury {
         fields
     }
 
+    /// Return the default date format used in the print and vprint methods.
     pub fn get_default_date_fmt() -> &'static str {
         DEFAULT_SECURITY_DATE_FORMAT
     }
 
+    /// Return the term string of the treasury structure.
     pub fn get_term(&self) -> String {
         self.term.to_owned()
     }
 
+    /// Return the security term string of the treasury structure.
     pub fn get_security_term(&self) -> String {
         self.security_term.to_owned()
     }
     
+    /// Return the original security term string of the treasury structure.
     pub fn get_original_security_term(&self) -> String {
         self.original_security_term.to_owned()
     }
-
+    
+    /// Calculate the percentage of debt that was accepted by primary dealers.
     pub fn get_percentage_debt_purchased_by_dealers(&self) -> f64 {
         (self.primary_dealer_accepted / self.competitive_accepted) * 100.0
     }
 
+    /// Calculate the percentage of debt that was accepted by direct bidders.
     pub fn get_percentage_debt_purchased_by_directs(&self) -> f64 {
         (self.direct_bidder_accepted / self.competitive_accepted) * 100.0
     }
 
+    /// Calculate the percentage of debt that was accepted by indirect bidders.
     pub fn get_percentage_debt_purchased_by_indirects(&self) -> f64 {
         (self.indirect_bidder_accepted / self.competitive_accepted) * 100.0
     }
 }
 
+/// Define a convienience type for the return values.
 pub type AuctionResult<T> = std::result::Result<T, AuctionResultError>;
+
+/// Define an opaque type for returning a treasury list.
 pub type Treasuries = Vec<Treasury>;
 
+/// The trait that all auction result modules must implement.
 pub trait TreasuryAccess<T> {
     fn get(&self) -> AuctionResult<T>;
     fn url(&self) -> String;

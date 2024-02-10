@@ -11,6 +11,7 @@ static URL: &str = "https://www.treasurydirect.gov/TA_WS";
 
 static TREASURIES_URL: &str = "/securities/search";
 
+/// Describe a tenor.
 pub struct Get {
     cusip: String,
     url: String,
@@ -39,6 +40,7 @@ impl TreasuryAccess<Treasuries> for Get {
 }
 
 impl Get {
+    /// Create a new Get module from a cusip number.
     pub fn new(cusip: &str) -> Self {
         Self {
             cusip: cusip.to_string(),

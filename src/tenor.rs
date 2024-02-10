@@ -58,6 +58,7 @@ impl Tenor {
         })
     }
 
+    /// Detect if the tenor is empty.
     pub fn is_empty(&self) -> bool {
         self.term.is_empty() && self.security == 0
     }

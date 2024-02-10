@@ -1,6 +1,8 @@
 //! # The library auctionresult.
 //! 
 //! 
+#[warn(missing_docs)]
+
 mod tests;
 pub mod latest;
 pub mod treasury;
