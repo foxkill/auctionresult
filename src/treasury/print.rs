@@ -4,7 +4,7 @@ extern crate prettytable;
 
 use crate::SecurityType;
 
-use super::Treasury;
+use super::{Treasuries, Treasury};
 use prettytable::{
     format::{self, Alignment},
     row, Cell, Row, Table,
@@ -21,8 +21,8 @@ use prettytable::{
 // High Yield:      1.573%
 // Interest Rate:   1.500%
 
-pub fn security_print(treasuries: &Vec<Treasury>) {
-    let mut f = numfmt::Formatter::default();
+pub fn security_print(treasuries: &Treasuries) {
+    // let mut f = numfmt::Formatter::default();
     let mut table = Table::new();
     let datefmt = Treasury::get_default_date_fmt();
 
@@ -48,7 +48,9 @@ pub fn security_print(treasuries: &Vec<Treasury>) {
                 &format!("{:.2}", treasury.bid_to_cover_ratio),
                 Alignment::RIGHT,
             ),
-            Cell::new_align(f.fmt2(treasury.primary_dealer_accepted), Alignment::RIGHT),
+            Cell::new_align(&format!("{:.2}%", treasury.get_percentage_debt_purchased_by_dealers()), Alignment::RIGHT),
+            Cell::new_align(&format!("{:.2}%", treasury.get_percentage_debt_purchased_by_directs()), Alignment::RIGHT),
+            Cell::new_align(&format!("{:.2}%", treasury.get_percentage_debt_purchased_by_indirects()), Alignment::RIGHT),
             Cell::new_align(
                 &format!(
                     "{:.3}%",
@@ -77,8 +79,9 @@ pub fn security_print(treasuries: &Vec<Treasury>) {
     table.printstd()
 }
 
-pub fn security_vprint(treasuries: &Vec<Treasury>) {
-    let mut f = numfmt::Formatter::default();
+/// Print treasuries in a vertical output format.
+pub fn security_vprint(treasuries: &Treasuries) {
+    // let mut f = numfmt::Formatter::default();
     let mut table = Table::new();
     let datefmt = Treasury::get_default_date_fmt();
     table.set_format(*format::consts::FORMAT_CLEAN);
@@ -100,8 +103,10 @@ pub fn security_vprint(treasuries: &Vec<Treasury>) {
             "Maturity Date:",
             treasury.maturity_date.format(datefmt)
         ]);
-        table.add_row(row!["Bid To Cover:", treasury.bid_to_cover_ratio]);
-        table.add_row(row!["Dealers:", f.fmt2(treasury.primary_dealer_accepted)]);
+        table.add_row(row!["Bid To Cover:", format!("{:.2}", treasury.bid_to_cover_ratio)]);
+        table.add_row(row!["Dealers %", format!("{:.2}%", treasury.get_percentage_debt_purchased_by_dealers())]);
+        table.add_row(row!["Indirects %", format!("{:.2}%", treasury.get_percentage_debt_purchased_by_directs())]);
+        table.add_row(row!["Indirects %", format!("{:.2}%", treasury.get_percentage_debt_purchased_by_indirects())]);
         if treasury.security_type == SecurityType::Bill {
             table.add_row(row!["High Rate:", &format!("{:.3}%", treasury.high_discount_rate)]);
             table.add_row(row!["Investment Rate:", &format!("{:.3}%", treasury.high_investment_rate)]);
@@ -109,6 +114,7 @@ pub fn security_vprint(treasuries: &Vec<Treasury>) {
             table.add_row(row!["High Yield:", &format!("{:.3}%", treasury.high_yield)]);
             table.add_row(row!["Interest Rate:", &format!("{:.3}%", treasury.interest_rate)]);
         }
+
         table.add_row(Row::empty());
     }
 
