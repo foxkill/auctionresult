@@ -1462,3 +1462,7 @@ pub(crate) fn api_single_item() -> &'static str {
         }
     ]"#
 }
+
+pub(crate) fn api_many_items() -> &'static str {
+    include_str!("./bond.json")
+}
