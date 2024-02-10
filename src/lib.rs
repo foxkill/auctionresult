@@ -8,6 +8,7 @@ pub mod latest;
 pub mod treasury;
 pub mod get;
 pub mod tenor;
+pub mod quality;
 
 // Re-exports - available modules.
 pub use latest::Latest;
