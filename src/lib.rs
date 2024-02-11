@@ -1,6 +1,6 @@
-//! # The library auctionresult.
-//! 
-//! 
+/*!
+# The library auctionresult.
+*/
 #[warn(missing_docs)]
 
 mod tests;
@@ -8,6 +8,8 @@ pub mod latest;
 pub mod treasury;
 pub mod get;
 pub mod tenor;
+
+#[cfg(feature = "quality")]
 pub mod quality;
 
 // Re-exports - available modules.
