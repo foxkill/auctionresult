@@ -8,7 +8,7 @@ use crate::{
 #[cfg(not(test))]
 static AUCTIONED_URL: &str = "https://www.treasurydirect.gov/TA_WS/securities/auctioned";
 #[cfg(test)]
-static AUCTIONED_URL: &str = "/securities/auctioned";
+pub (crate) static AUCTIONED_URL: &str = "/securities/auctioned";
 
 /// Descriptor of the Latest module.
 #[derive(Debug, Default, PartialEq)]
@@ -83,6 +83,11 @@ impl Latest {
 
     pub fn get_security_type(&self) -> SecurityType {
         self.security_type.to_owned()
+    }
+
+    #[cfg(test)]
+    pub fn set_host(&mut self, host: String) {
+        self.host = host
     }
 }
 
