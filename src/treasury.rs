@@ -19,10 +19,9 @@ use deserializer::bool_from_string;
 use deserializer::f64_from_string;
 
 // Re-Export
+pub use error::AuctionResultError;
 pub use load::load;
 pub use security_type::SecurityType;
-pub use error::AuctionResultError;
-
 
 const DEFAULT_SECURITY_DATE_FORMAT: &str = "%m/%d/%Y";
 
@@ -67,7 +66,7 @@ pub struct Treasury {
     indirect_bidder_accepted: f64,
     // 84
     original_security_term: String,
-    // 90 
+    // 90
     #[serde(deserialize_with = "f64_from_string")]
     primary_dealer_accepted: f64,
     // 92
@@ -132,12 +131,12 @@ impl Treasury {
     pub fn get_security_term(&self) -> String {
         self.security_term.to_owned()
     }
-    
+
     /// Return the original security term string of the treasury structure.
     pub fn get_original_security_term(&self) -> String {
         self.original_security_term.to_owned()
     }
-    
+
     /// Calculate the percentage of debt that was accepted by primary dealers.
     pub fn get_percentage_debt_purchased_by_dealers(&self) -> f64 {
         (self.primary_dealer_accepted / self.competitive_accepted) * 100.0
@@ -151,6 +150,10 @@ impl Treasury {
     /// Calculate the percentage of debt that was accepted by indirect bidders.
     pub fn get_percentage_debt_purchased_by_indirects(&self) -> f64 {
         (self.indirect_bidder_accepted / self.competitive_accepted) * 100.0
+    }
+
+    pub(crate) fn get_bid_to_cover_ratio(&self) -> f64 {
+        self.bid_to_cover_ratio
     }
 }
 
