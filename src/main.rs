@@ -19,5 +19,9 @@ fn main() {
         AuctionResultCommands::Latest { sectype: _, days: _, tenor: _} => {
             handle_latest(&args);
         }
+        #[cfg(feature = "quality")]
+        AuctionResultCommands::Quality { cusip: _ } => {
+            todo!()
+        },
     }
 }

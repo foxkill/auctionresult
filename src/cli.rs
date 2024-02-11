@@ -59,6 +59,15 @@ pub enum AuctionResultCommands {
         #[arg(value_name = "tenor", long)]
         tenor: Option<String>,
     },
+
+    #[cfg(feature = "quality")]
+    #[command(arg_required_else_help = false)]
+    /// Prints the quality of the auction.
+    Quality {
+        #[arg(value_name = "cusip", value_hint = ValueHint::CommandString)]
+        /// Retrieve the details of a treasury with the given cusip number.
+        cusip: String,
+    }
 }
 
 fn handle_error(e: AuctionResultError) -> i32 {
