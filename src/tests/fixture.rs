@@ -1463,6 +1463,7 @@ pub(crate) fn api_single_item() -> &'static str {
     ]"#
 }
 
+/// Return 250 treasuries from a file.
 pub(crate) fn api_many_items() -> &'static str {
     include_str!("./bond.json")
 }
