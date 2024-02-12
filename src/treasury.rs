@@ -2,6 +2,8 @@
 //!
 //!
 
+#[allow(dead_code)]
+
 // make usable.
 mod deserializer;
 
@@ -152,7 +154,8 @@ impl Treasury {
         (self.indirect_bidder_accepted / self.competitive_accepted) * 100.0
     }
 
-    pub(crate) fn get_bid_to_cover_ratio(&self) -> f64 {
+    /// Returns the get bid to cover ratio of this [`Treasury`].
+    pub fn get_bid_to_cover_ratio(&self) -> f64 {
         self.bid_to_cover_ratio
     }
 }
