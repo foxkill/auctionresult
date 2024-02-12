@@ -81,7 +81,7 @@ fn handle_error(e: AuctionResultError) -> i32 {
             2
         },
             AuctionResultError::ParseCusip => {
-                println!("Could not parse cusip number.");
+            println!("Could not parse cusip number.");
             3
         },
         AuctionResultError::ParseTenor => {
@@ -94,24 +94,17 @@ fn handle_error(e: AuctionResultError) -> i32 {
 /// Handle the command get.
 pub fn handle_get(args: &AuctionResultParser) {
     let AuctionResultCommands::Get { cusip } = &args.command else {
-        println!("Cannot extract cusip number.");
-        exit(0);
+        exit(handle_error(AuctionResultError::ParseCusip));
     };
 
     let get_command = Get::new(cusip);
 
     let treasuries = match get_command.get() {
         Ok(vec) => vec,
-        Err(e) => {
-            exit(handle_error(e))
-        }
+        Err(e) => exit(handle_error(e))
     };
 
-    if args.vertical {
-        security_vprint(&treasuries);
-    } else {
-        security_print(&treasuries);
-    }
+    (if args.vertical { security_vprint } else { security_print })(&treasuries)
 }
 
 /// Handle the command lastest.
@@ -146,8 +139,9 @@ pub fn handle_latest(args: &AuctionResultParser) {
         }
     };
     
-    match args.vertical {
-        true => security_vprint(&securities),
-        false => security_print(&securities),
-    }
+    (if args.vertical { security_vprint } else { security_print })(&securities)
+    // match args.vertical {
+    //     true => security_vprint(&securities),
+    //     false => security_print(&securities),
+    // }
 }
