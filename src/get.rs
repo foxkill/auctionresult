@@ -1,7 +1,7 @@
 //! # The Get Module
 extern crate cusip;
-use cusip as cu;
 use crate::treasury::{load::load, AuctionResult, AuctionResultError, Treasuries, TreasuryAccess};
+use cusip as cu;
 
 #[cfg(test)]
 static URL: &str = "";
@@ -74,7 +74,7 @@ mod tests {
     fn it_should_handle_an_invalid_cusip() {
         // if cfg!(target_os = "windows") {
         let g = Get::new("x1");
-        
+
         let result = g.get();
         assert!(result.is_err());
     }

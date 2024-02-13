@@ -47,7 +47,7 @@ impl Quality {
         ) = self.ratio_mean(treasuries, 5);
 
         let treasury = treasuries.first().unwrap();
-    
+
         // println!(
         //     "Treasury first: {:.2}->{:.2} {:.2}->{:.2} {:.2}->{:.2}",
         //     treasury.get_bid_to_cover_ratio(),
@@ -68,16 +68,13 @@ impl Quality {
             * -INDIRECT_BIDDER_WEIGHT;
 
         // Round to 3 decimal places.
-        ((diff_bid_to_cover + diff_primary_dealers + diff_indirect_bidders) * 1000.0).round() / 1000.0
+        ((diff_bid_to_cover + diff_primary_dealers + diff_indirect_bidders) * 1000.0).round()
+            / 1000.0
     }
 
-    /// Calculate the mean of the _bid to cover_, _primary dealers_ and _indirect_bidders_ of 
+    /// Calculate the mean of the _bid to cover_, _primary dealers_ and _indirect_bidders_ of
     /// the last [`last_auctions`] auctions.
-    fn ratio_mean(
-        &self,
-        treasuries: &Treasuries,
-        last_auctions: usize,
-    ) -> (f64, f64, f64) {
+    fn ratio_mean(&self, treasuries: &Treasuries, last_auctions: usize) -> (f64, f64, f64) {
         if treasuries.len() < last_auctions + 1 {
             return (0.0, 0.0, 0.0);
         }

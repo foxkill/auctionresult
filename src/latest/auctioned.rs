@@ -8,7 +8,7 @@ use crate::{
 #[cfg(not(test))]
 static AUCTIONED_URL: &str = "https://www.treasurydirect.gov/TA_WS/securities/auctioned";
 #[cfg(test)]
-pub (crate) static AUCTIONED_URL: &str = "/securities/auctioned";
+pub(crate) static AUCTIONED_URL: &str = "/securities/auctioned";
 
 /// Descriptor of the Latest module.
 #[derive(Debug, Default, PartialEq)]
@@ -33,10 +33,10 @@ impl TreasuryAccess<Treasuries> for Latest {
         } else {
             treasuries
                 .into_iter()
-                .filter(|t| { 
-                    *t.get_term() == compare_to ||
-                    *t.get_security_term() == compare_to ||
-                    *t.get_original_security_term() == compare_to
+                .filter(|t| {
+                    *t.get_term() == compare_to
+                        || *t.get_security_term() == compare_to
+                        || *t.get_original_security_term() == compare_to
                 })
                 .collect::<Treasuries>()
         })
@@ -64,8 +64,8 @@ impl TreasuryAccess<Treasuries> for Latest {
 impl Latest {
     /// Create a new Latest module from the given security type, ie [`Bond`, `Note`], etc.,
     /// the number of [`days`] to look back and a filter for the tenor, which can be
-    /// for example: [`10y`, `10-Y`, `10-years`] or any other specifier of a time 
-    /// range. If the number of [`days`] is equal to [`0`] the default of [`7`] 
+    /// for example: [`10y`, `10-Y`, `10-years`] or any other specifier of a time
+    /// range. If the number of [`days`] is equal to [`0`] the default of [`7`]
     /// days is applied.
     pub fn new(treasury_type: SecurityType, days: usize, tenor: Tenor) -> Self {
         Self {
@@ -129,10 +129,7 @@ mod tests {
 
         server
             .mock("GET", AUCTIONED_URL)
-            .match_query(Matcher::UrlEncoded(
-                "days".into(),
-                "8".into(),
-            ))
+            .match_query(Matcher::UrlEncoded("days".into(), "8".into()))
             .with_body(api_multiple_items())
             .create();
 

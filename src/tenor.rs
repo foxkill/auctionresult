@@ -9,7 +9,6 @@ macro_rules! re {
     }};
 }
 
-
 use crate::treasury::{AuctionResult, AuctionResultError};
 #[derive(Debug, PartialEq, Default)]
 pub struct Tenor {
@@ -43,8 +42,8 @@ impl Tenor {
         let term = match period.to_lowercase().chars().next().unwrap_or(' ') {
             'y' => "Year",
             'w' => "Weeks",
-            'd' => "Day",        
-            _ => return Err(AuctionResultError::ParseTenor)
+            'd' => "Day",
+            _ => return Err(AuctionResultError::ParseTenor),
         };
 
         // Guard
@@ -54,7 +53,7 @@ impl Tenor {
 
         Ok(Self {
             term: term.to_owned(),
-            security: sec
+            security: sec,
         })
     }
 
@@ -71,7 +70,7 @@ mod tests {
     #[test]
     fn it_should_correctly_parse_a_tenor() {
         let result = Tenor::parse("10-Y");
-        
+
         assert!(result.is_ok());
         let tenor = result.unwrap();
         assert_eq!(tenor.security, 10);
@@ -82,7 +81,7 @@ mod tests {
     #[test]
     fn it_should_return_a_parse_error() {
         let result = Tenor::parse("--Y");
-        
+
         println!("{result:#?}");
         assert!(result.is_err());
     }

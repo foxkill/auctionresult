@@ -4,10 +4,10 @@
 use std::process::exit;
 use std::str::FromStr;
 
+use auctionresult::security_vprint;
 use auctionresult::tenor::Tenor;
 use auctionresult::treasury::print::security_print;
 use auctionresult::treasury::AuctionResultError;
-use auctionresult::security_vprint;
 use auctionresult::Get;
 use auctionresult::Latest;
 use auctionresult::SecurityType;
@@ -67,7 +67,7 @@ pub enum AuctionResultCommands {
         #[arg(value_name = "cusip", value_hint = ValueHint::CommandString)]
         /// Retrieve the details of a treasury with the given cusip number.
         cusip: String,
-    }
+    },
 }
 
 fn handle_error(e: AuctionResultError) -> i32 {
@@ -75,19 +75,19 @@ fn handle_error(e: AuctionResultError) -> i32 {
         AuctionResultError::Request(req) => {
             println!("Invalid Request, status code {}", req.status().unwrap());
             1
-        },
+        }
         AuctionResultError::RequestDyn(_) => {
             println!("Invalid dynamic request");
             2
-        },
-            AuctionResultError::ParseCusip => {
+        }
+        AuctionResultError::ParseCusip => {
             println!("Could not parse cusip number.");
             3
-        },
+        }
         AuctionResultError::ParseTenor => {
             println!("Could not parse tenor.");
             4
-        },
+        }
     }
 }
 
@@ -101,15 +101,24 @@ pub fn handle_get(args: &AuctionResultParser) {
 
     let treasuries = match get_command.get() {
         Ok(vec) => vec,
-        Err(e) => exit(handle_error(e))
+        Err(e) => exit(handle_error(e)),
     };
 
-    (if args.vertical { security_vprint } else { security_print })(&treasuries)
+    (if args.vertical {
+        security_vprint
+    } else {
+        security_print
+    })(&treasuries)
 }
 
 /// Handle the command lastest.
 pub fn handle_latest(args: &AuctionResultParser) {
-    let AuctionResultCommands::Latest { sectype, days, tenor } = &args.command else {
+    let AuctionResultCommands::Latest {
+        sectype,
+        days,
+        tenor,
+    } = &args.command
+    else {
         panic!("Cannot extract the security type and/or the number of days to look back.")
     };
 
@@ -134,12 +143,14 @@ pub fn handle_latest(args: &AuctionResultParser) {
 
     let securities = match response {
         Ok(vec) => vec,
-        Err(e) => {
-            exit(handle_error(e))
-        }
+        Err(e) => exit(handle_error(e)),
     };
-    
-    (if args.vertical { security_vprint } else { security_print })(&securities)
+
+    (if args.vertical {
+        security_vprint
+    } else {
+        security_print
+    })(&securities)
     // match args.vertical {
     //     true => security_vprint(&securities),
     //     false => security_print(&securities),

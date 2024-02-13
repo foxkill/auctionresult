@@ -1,5 +1,5 @@
 //! # The error used throughout this libray
-//! 
+//!
 use std::any::Any;
 
 #[derive(Debug)]
@@ -19,6 +19,6 @@ impl From<reqwest::Error> for AuctionResultError {
 
 impl From<Box<dyn Any + Send>> for AuctionResultError {
     fn from(value: Box<dyn Any + Send>) -> Self {
-       AuctionResultError::RequestDyn(value) 
+        AuctionResultError::RequestDyn(value)
     }
 }

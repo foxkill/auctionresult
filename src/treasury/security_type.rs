@@ -84,14 +84,7 @@ mod tests {
             SecurityType::Null,
         ];
 
-        let result_variants: [&str; 6] = [
-            "Bill",
-            "Note",
-            "Bond",
-            "CMB",
-            "FRN",
-            "Null",
-        ];
+        let result_variants: [&str; 6] = ["Bill", "Note", "Bond", "CMB", "FRN", "Null"];
 
         for (index, variant) in expected_variants.iter().enumerate() {
             assert_eq!(result_variants[index], variant.to_string());
