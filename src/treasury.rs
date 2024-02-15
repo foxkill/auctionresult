@@ -1,6 +1,4 @@
 //! # Treasury
-//!
-//!
 
 #[allow(dead_code)]
 // make usable.
@@ -21,13 +19,13 @@ use deserializer::f64_from_string;
 
 // Re-Export
 pub use error::AuctionResultError;
-pub use load::load;
 pub use security_type::SecurityType;
+pub use load::load;
 
 const DEFAULT_SECURITY_DATE_FORMAT: &str = "%m/%d/%Y";
 
 #[allow(dead_code)]
-#[derive(Debug, Default, Deserialize)]
+#[derive(Debug, Default, Deserialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct Treasury {
     // 1
@@ -136,6 +134,11 @@ impl Treasury {
     /// Return the original security term string of the treasury structure.
     pub fn get_original_security_term(&self) -> String {
         self.original_security_term.to_owned()
+    }
+
+    /// Get the security type of the treasury.
+    pub fn get_security_type(&self) -> SecurityType {
+        self.security_type.to_owned()
     }
 
     /// Calculate the percentage of debt that was accepted by primary dealers.
