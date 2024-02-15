@@ -171,7 +171,7 @@ pub fn security_vprint(treasuries: &Treasuries) {
 
 #[cfg(test)]
 mod tests {
-    use crate::{tests::fixture::api_multiple_items, Treasury};
+    use crate::{tests::fixture::api_multiple_items, treasury::Treasury};
 
     // use super::*;
 
