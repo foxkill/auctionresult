@@ -90,6 +90,11 @@ impl Treasury {
         self.cusip.to_string()
     }
 
+    /// Return if an auction is re-openend.
+    pub fn is_reopening(&self) -> bool {
+        self.reopening
+    }
+
     /// Return the field headers to construct the output of the treasury.
     pub fn get_fields<'a>(&self) -> Vec<&'a str> {
         let mut fields = vec![
