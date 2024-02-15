@@ -16,7 +16,7 @@ pub struct Latest {
     days: usize,
     security_type: SecurityType,
     tenor: Tenor,
-    #[cfg(test)]
+    // #[cfg(test)]
     host: String,
 }
 
@@ -65,14 +65,14 @@ impl Latest {
     /// Create a new Latest module from the given security type, ie [`Bond`, `Note`], etc.,
     /// the number of [`days`] to look back and a filter for the tenor, which can be
     /// for example: [`10y`, `10-Y`, `10-years`] or any other specifier of a time
-    /// range. If the number of [`days`] is equal to [`0`] the default of [`7`]
-    /// days is applied.
+    /// range. If the number of [`days`] is equal to [`0`] then there will be 
+    /// only [`250`] records returned.
     pub fn new(treasury_type: SecurityType, days: usize, tenor: Tenor) -> Self {
         Self {
-            days: if days == 0 { 7 } else { days },
+            days,
             security_type: treasury_type,
             tenor,
-            #[cfg(test)]
+            // #[cfg(test)]
             host: "".to_owned(),
         }
     }
@@ -85,9 +85,9 @@ impl Latest {
         self.security_type.to_owned()
     }
 
-    #[cfg(test)]
-    pub fn set_host(&mut self, host: String) {
-        self.host = host
+    // #[cfg(test)]
+    pub fn set_host(&mut self, host: impl Into<String>) {
+        self.host = host.into()
     }
 }
 
