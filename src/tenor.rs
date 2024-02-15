@@ -23,12 +23,14 @@ impl std::fmt::Display for Tenor {
 }
 
 impl Tenor {
-    pub fn parse(s: &str) -> AuctionResult<Self> {
+    pub fn parse(s: impl Into<String>) -> AuctionResult<Self> {
+        let s = s.into();
+
         if s.is_empty() {
             return Ok(Tenor::default());
         }
         // Guard
-        let Some(captures) = re!(RE).captures(s) else {
+        let Some(captures) = re!(RE).captures(&s) else {
             return Err(AuctionResultError::ParseCusip);
         };
 
