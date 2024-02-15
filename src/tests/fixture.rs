@@ -1,7 +1,6 @@
 //! Represents the multipe responses coming from the API.
 //
 //
-
 #![cfg(test)]
 pub(crate) const MULTIPLE_ITEMS_COUNT: usize = 11;
 
@@ -1463,6 +1462,12 @@ pub(crate) fn api_single_item() -> &'static str {
     ]"#
 }
 
+pub(crate) fn api_30y_bond_item() -> &'static str {
+    r#"
+    "#
+}
+
+#[allow(dead_code)]
 /// Return 250 treasuries from a file.
 pub(crate) fn api_many_items() -> &'static str {
     include_str!("./bond.json")
