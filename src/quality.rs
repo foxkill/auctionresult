@@ -3,7 +3,6 @@
 //! measures the quality of an auction.
 
 use crate::tenor::Tenor;
-use crate::treasury::Treasuries;
 use crate::{
     treasury::{AuctionResult, AuctionResultError, Treasury, TreasuryAccess},
     Get, Latest,
@@ -21,6 +20,7 @@ const WHEN_ISSUED_WEIGHT: f64 = 0.4;
 #[derive(Default, Debug)]
 pub struct Quality {
     cusip: String,
+    lookback_auctions: usize,
     host: String,
 }
 
@@ -30,14 +30,19 @@ pub struct Quality {
 // 75 * 0.7 + 85 * 0.3 = 79.5
 
 impl Quality {
-    pub fn new(cusip: impl Into<String>) -> Self {
+    pub fn new(cusip: impl Into<String>, lookback_auctions: usize) -> Self {
         Self {
             cusip: cusip.into(),
-            ..Self::default()
+            lookback_auctions: if lookback_auctions == 0 { LAST_AUCTIONS } else { lookback_auctions },
+            host: "".to_owned(),
         }
     }
 
-    pub fn qget(&mut self) -> AuctionResult<f64> {
+    pub fn cusip(&self) -> String {
+        self.cusip.to_owned()
+    }
+
+    pub fn get(&mut self) -> AuctionResult<f64> {
         let mut get_command = Get::new(&self.cusip);
 
         if cfg!(test) {
@@ -52,11 +57,12 @@ impl Quality {
             return Err(AuctionResultError::NoTreasury);
         };
 
-        let quality = self.calculate_quality(treasury, LAST_AUCTIONS)?;
+        let quality = self.calculate_quality(treasury)?;
 
         Ok(quality)
     }
 
+    #[allow(dead_code)]
     fn set_host(&mut self, host: impl Into<String>) {
         self.host = host.into();
     }
@@ -67,8 +73,7 @@ impl Quality {
     /// [`lookback_auctions`]: The _number_ of auctions to consider in the past.
     pub fn calculate_quality(
         &self,
-        treasury: &Treasury,
-        lookback_auctions: usize,
+        treasury: &Treasury
     ) -> AuctionResult<f64> {
         // Get the term of the treasury.
         let tenor = Tenor::parse(treasury.get_original_security_term())?;
@@ -87,7 +92,7 @@ impl Quality {
         let lastest_auctions = latest.get()?;
 
         // Make sure we can look at the lastest X number of auctions.
-        if lastest_auctions.len() < LAST_AUCTIONS + 1 {
+        if lastest_auctions.len() < self.lookback_auctions + 1 {
             return Err(AuctionResultError::NoTreasury);
         }
 
@@ -99,21 +104,22 @@ impl Quality {
         };
 
         // Make sure we can look behind the lastest X number of auctions.
-        if pos + lookback_auctions > lastest_auctions.len() {
+        if pos + self.lookback_auctions + 1 > lastest_auctions.len() {
             return Err(AuctionResultError::NoTreasury);
         }
 
         let treasuries = lastest_auctions
             .iter()
-            .skip(pos)
-            .take(lookback_auctions + 1)
+            .skip(pos + 1)
+            .filter(|s| !s.is_reopening())
+            .take(self.lookback_auctions)
             .collect::<Vec<&Treasury>>();
 
         let (
             sum_bid_to_cover,
             sum_primary_dealers,
             sum_indirect_bidders,
-        ) = self.ratio_mean(&treasuries, lookback_auctions);
+        ) = self.ratio_mean(&treasuries, self.lookback_auctions);
 
         let treasury = treasuries.first().unwrap();
 
@@ -164,10 +170,11 @@ mod tests {
     use crate::{
         get::TREASURIES_URL,
         latest::auctioned::AUCTIONED_URL,
-        tests::fixture::{api_30y_bond_item, api_many_items},
+        tests::fixture::{api_30y_bond_item, api_30y_very_old_bond_item, api_many_items},
     };
 
     use super::*;
+    #[allow(dead_code)]
     const OUT_OF_BOUND_CUSIP: &str = "912810EY0";
     const TEST_CUSIP: &str = "912810SH2";
 
@@ -175,10 +182,10 @@ mod tests {
     fn it_should_assess_the_quality_of_an_auction() {
         let mut server = mockito::Server::new();
 
-        let mut quality = Quality::new(TEST_CUSIP);
+        let mut quality = Quality::new(TEST_CUSIP, LAST_AUCTIONS);
         quality.set_host(server.url());
 
-        println!("{:#?}", server.url());
+        // println!("{:#?}", server.url());
 
         server
             .mock("GET", TREASURIES_URL)
@@ -198,14 +205,38 @@ mod tests {
             .with_body(api_many_items())
             .create();
 
-        // let response: Treasuries = latest.get().unwrap();
+        let auction_quality = quality.get().unwrap();
 
-        let treasury = quality.qget();
+        assert_eq!(-0.465, auction_quality);
+    }
 
-        println!("{:#?}", treasury);
+    #[test]
+    fn it_should_correctly_handle_out_of_bound_conditions() {
+        let mut server = mockito::Server::new();
 
-        // let q = quality.auction_quality(&response, LAST_AUCTIONS);
-        // println!("Auction Quality is: {:#?}->{:.3}", quality, q);
-        // assert_eq!(-0.545, q);
+        let mut quality = Quality::new(OUT_OF_BOUND_CUSIP, LAST_AUCTIONS);
+        quality.set_host(server.url());
+
+        server
+            .mock("GET", TREASURIES_URL)
+            .match_query(Matcher::AllOf(vec![
+                Matcher::UrlEncoded("cusip".into(), quality.cusip()),
+                Matcher::UrlEncoded("format".into(), "json".into()),
+            ]))
+            .with_body(api_30y_very_old_bond_item())
+            .create();
+
+        server
+            .mock("GET", AUCTIONED_URL)
+            .match_query(Matcher::AllOf(vec![Matcher::UrlEncoded(
+                "type".into(),
+                "Bond".into(),
+            )]))
+            .with_body(api_many_items())
+            .create();
+
+        let auction_quality = quality.get();
+
+        assert!(auction_quality.is_err());
     }
 }
