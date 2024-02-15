@@ -9,6 +9,7 @@ pub enum AuctionResultError {
     // Could not parse cusip number.
     ParseCusip,
     ParseTenor,
+    NoTreasury,
 }
 
 impl From<reqwest::Error> for AuctionResultError {
