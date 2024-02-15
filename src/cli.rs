@@ -8,10 +8,10 @@ use auctionresult::security_vprint;
 use auctionresult::tenor::Tenor;
 use auctionresult::treasury::print::security_print;
 use auctionresult::treasury::AuctionResultError;
+use auctionresult::treasury::TreasuryAccess;
 use auctionresult::Get;
 use auctionresult::Latest;
 use auctionresult::SecurityType;
-use auctionresult::TreasuryAccess;
 
 use clap::Parser;
 use clap::Subcommand;
@@ -88,6 +88,7 @@ fn handle_error(e: AuctionResultError) -> i32 {
             println!("Could not parse tenor.");
             4
         }
+        AuctionResultError::NoTreasury => todo!(),
     }
 }
 
