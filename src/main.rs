@@ -6,8 +6,8 @@ use cli::handle_latest;
 use cli::AuctionResultCommands;
 use cli::AuctionResultParser;
 
-#[allow(unused)]
-use auctionresult::{Get, Latest, SecurityType, Treasury, TreasuryAccess};
+// Use directories crate for a directory for the cache.
+// Create a command for upcoming (list the auctions for the next 7 days).
 
 fn main() {
     let args = AuctionResultParser::parse();
