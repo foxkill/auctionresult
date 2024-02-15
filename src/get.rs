@@ -4,17 +4,17 @@ use crate::treasury::{load::load, AuctionResult, AuctionResultError, Treasuries,
 use cusip as cu;
 
 #[cfg(test)]
-static URL: &str = "";
+static HOST: &str = "";
 
 #[cfg(not(test))]
-static URL: &str = "https://www.treasurydirect.gov/TA_WS";
+static HOST: &str = "https://www.treasurydirect.gov/TA_WS";
 
-static TREASURIES_URL: &str = "/securities/search";
+// Use pub(create) for testing puposes.
+pub(crate) static TREASURIES_URL: &str = "/securities/search";
 
-/// Describe a tenor.
 pub struct Get {
     cusip: String,
-    url: String,
+    host: String,
 }
 
 impl TreasuryAccess<Treasuries> for Get {
@@ -34,23 +34,22 @@ impl TreasuryAccess<Treasuries> for Get {
     fn url(&self) -> String {
         format!(
             "{}{}?cusip={}&format=json",
-            self.url, TREASURIES_URL, self.cusip
+            self.host, TREASURIES_URL, self.cusip
         )
     }
 }
 
 impl Get {
     /// Create a new Get module from a cusip number.
-    pub fn new(cusip: &str) -> Self {
+    pub fn new(cusip: impl Into<String>) -> Self {
         Self {
-            cusip: cusip.to_string(),
-            url: URL.to_string(),
+            cusip: cusip.into(),
+            host: String::from(HOST),
         }
     }
 
-    #[cfg(test)]
-    fn set_host(&mut self, url: impl Into<String>) {
-        self.url = url.into();
+    pub fn set_host(&mut self, host: impl Into<String>) {
+        self.host = host.into();
     }
 }
 
@@ -60,13 +59,13 @@ mod tests {
     use crate::tests::fixture::api_single_item;
     use mockito::Matcher;
 
-    const CUSIP: &str = "91282CJQ5";
+    const TEST_CUSIP: &str = "91282CJQ5";
     #[test]
     fn it_should_correctly_build_an_url() {
         // if cfg!(target_os = "windows") {
-        let g = Get::new(CUSIP);
+        let g = Get::new(TEST_CUSIP);
         assert_eq!(
-            format!("{}?cusip={}&format=json", TREASURIES_URL, CUSIP),
+            format!("{}?cusip={}&format=json", TREASURIES_URL, TEST_CUSIP),
             g.url()
         );
     }
@@ -83,21 +82,21 @@ mod tests {
         let mut server = mockito::Server::new();
         let host = server.url();
 
-        let mut g = Get::new(CUSIP);
+        let mut g = Get::new(TEST_CUSIP);
 
         g.set_host(host);
 
         server
             .mock("GET", TREASURIES_URL)
             .match_query(Matcher::AllOf(vec![
-                Matcher::UrlEncoded("cusip".into(), CUSIP.into()),
+                Matcher::UrlEncoded("cusip".into(), TEST_CUSIP.into()),
                 Matcher::UrlEncoded("format".into(), "json".into()),
             ]))
             .with_body(api_single_item())
             .create();
 
         let v = g.get().unwrap();
-        assert_eq!(CUSIP, v[0].cusip());
+        assert_eq!(TEST_CUSIP, v[0].cusip());
     }
 
     #[test]
@@ -105,14 +104,14 @@ mod tests {
         let mut server = mockito::Server::new();
         let host = server.url();
 
-        let mut g = Get::new(CUSIP);
+        let mut g = Get::new(TEST_CUSIP);
 
         g.set_host(host);
 
         server
             .mock("GET", TREASURIES_URL)
             .match_query(Matcher::AllOf(vec![
-                Matcher::UrlEncoded("cusip".into(), CUSIP.into()),
+                Matcher::UrlEncoded("cusip".into(), TEST_CUSIP.into()),
                 Matcher::UrlEncoded("format".into(), "json".into()),
             ]))
             .with_body(api_single_item())
@@ -129,11 +128,11 @@ mod tests {
 
     #[test]
     fn it_should_correctly_handle_a_connection_error() {
-        let mut g = Get::new(CUSIP);
+        let mut g = Get::new(TEST_CUSIP);
         // Make sure that nothing is listening on that port.
         g.set_host("https://localhost:12000");
         let result = g.get();
-        println!("{result:#?}");
+        // println!("{result:#?}");
         assert!(result.is_err());
     }
 }
