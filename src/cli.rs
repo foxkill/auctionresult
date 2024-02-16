@@ -3,7 +3,8 @@
 //!
 use std::process::exit;
 use std::str::FromStr;
-
+#[cfg(feature = "quality")]
+use auctionresult::quality;
 use auctionresult::security_vprint;
 use auctionresult::tenor::Tenor;
 use auctionresult::treasury::print::security_print;
@@ -89,6 +90,7 @@ fn handle_error(e: AuctionResultError) -> i32 {
             4
         }
         AuctionResultError::NoTreasury => todo!(),
+        AuctionResultError::OutOfBounds => todo!(),
     }
 }
 
@@ -136,8 +138,6 @@ pub fn handle_latest(args: &AuctionResultParser) {
         exit(4);
     };
 
-    // println!("{}", tenor);
-
     let latest_command = Latest::new(security_type, look_back_days, tenor);
 
     let response = latest_command.get();
@@ -152,8 +152,21 @@ pub fn handle_latest(args: &AuctionResultParser) {
     } else {
         security_print
     })(&securities)
-    // match args.vertical {
-    //     true => security_vprint(&securities),
-    //     false => security_print(&securities),
-    // }
+}
+
+#[cfg(feature = "quality")]
+/// Handle the quality command.
+pub fn handle_quality(args: &AuctionResultParser) {
+    #[cfg(feature = "quality")]
+    let AuctionResultCommands::Quality { cusip } = &args.command else {
+        exit(handle_error(AuctionResultError::ParseCusip));
+    };
+
+    let quality_command = quality::Quality::new(cusip, 5);
+    let quality = match quality_command.get() {
+        Ok(q) => q,
+        Err(e) => exit(handle_error(e)),
+    };
+
+    println!("The quality of the auction {} is: {}", cusip, quality);
 }

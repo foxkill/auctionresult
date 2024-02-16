@@ -3,6 +3,8 @@ mod cli;
 use clap::Parser;
 use cli::handle_get;
 use cli::handle_latest;
+#[cfg(feature = "quality")]
+use cli::handle_quality;
 use cli::AuctionResultCommands;
 use cli::AuctionResultParser;
 
@@ -25,7 +27,7 @@ fn main() {
         }
         #[cfg(feature = "quality")]
         AuctionResultCommands::Quality { cusip: _ } => {
-            todo!()
+            handle_quality(&args)
         }
     }
 }
