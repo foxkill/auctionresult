@@ -10,6 +10,7 @@ pub enum AuctionResultError {
     ParseCusip,
     ParseTenor,
     NoTreasury,
+    OutOfBounds,
 }
 
 impl From<reqwest::Error> for AuctionResultError {
