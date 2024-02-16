@@ -21,6 +21,8 @@ pub struct Latest {
 }
 
 impl TreasuryAccess<Treasuries> for Latest {
+    /// Get the latest auction results.
+    /// - If a [`tenor`] is given then only the treasuries with the same tenor will be returned.
     fn get(&self) -> AuctionResult<Treasuries> {
         let url = self.url();
         let response = load(url)?;
@@ -51,8 +53,10 @@ impl TreasuryAccess<Treasuries> for Latest {
         if self.security_type != SecurityType::Null {
             url.push_str("?type=");
             url.push_str(&self.security_type.to_string());
-            url.push_str("&days=");
-            url.push_str(&self.days.to_string());
+            if self.days > 0 {
+                url.push_str("&days=");
+                url.push_str(&self.days.to_string());
+            }
         } else {
             url.push_str("?days=");
             url.push_str(&self.days.to_string());
@@ -65,7 +69,7 @@ impl Latest {
     /// Create a new Latest module from the given security type, ie [`Bond`, `Note`], etc.,
     /// the number of [`days`] to look back and a filter for the tenor, which can be
     /// for example: [`10y`, `10-Y`, `10-years`] or any other specifier of a time
-    /// range. If the number of [`days`] is equal to [`0`] then there will be 
+    /// range. If the number of [`days`] is equal to [`0`] then there will be
     /// only [`250`] records returned.
     pub fn new(treasury_type: SecurityType, days: usize, tenor: Tenor) -> Self {
         Self {
