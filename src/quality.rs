@@ -42,16 +42,15 @@ impl Quality {
         self.cusip.to_owned()
     }
 
-    pub fn get(&mut self) -> AuctionResult<f64> {
+    /// Return the quality of the auction.
+    pub fn get(&self) -> AuctionResult<f64> {
         let mut get_command = Get::new(&self.cusip);
 
         if cfg!(test) {
             get_command.set_host(&self.host);
-        }
+        } 
 
-        let treasuries = get_command.get();
-
-        let treasuries = treasuries?;
+        let treasuries = get_command.get()?;
 
         let Some(treasury) = treasuries.first() else {
             return Err(AuctionResultError::NoTreasury);
@@ -81,7 +80,7 @@ impl Quality {
         // Get the security type.
         let security_type = treasury.get_security_type();
 
-        // Create the lastest module and search for auctions that were happening
+        // Create the lastest module and search for auctions that were held
         // before the given auction.
         let mut latest = Latest::new(security_type, 0, tenor);
 
@@ -93,7 +92,7 @@ impl Quality {
 
         // Make sure we can look at the lastest X number of auctions.
         if lastest_auctions.len() < self.lookback_auctions + 1 {
-            return Err(AuctionResultError::NoTreasury);
+            return Err(AuctionResultError::OutOfBounds);
         }
 
         // Find the auction with given cusip.
@@ -105,7 +104,7 @@ impl Quality {
 
         // Make sure we can look behind the lastest X number of auctions.
         if pos + self.lookback_auctions + 1 > lastest_auctions.len() {
-            return Err(AuctionResultError::NoTreasury);
+            return Err(AuctionResultError::OutOfBounds);
         }
 
         let treasuries = lastest_auctions
