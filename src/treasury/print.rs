@@ -2,7 +2,7 @@
 //!
 extern crate prettytable;
 
-use crate::SecurityType;
+use crate::{quality::Quality, SecurityType};
 
 use super::{Treasuries, Treasury};
 use prettytable::{
@@ -167,6 +167,80 @@ pub fn security_vprint(treasuries: &Treasuries) {
     }
 
     table.printstd()
+}
+
+/// Print auction quotes for a given treasury.
+pub fn auction_quality_print(aq: f64, q: &Quality) {
+    let mut table = Table::new();
+    table.set_format(*format::consts::FORMAT_CLEAN);
+
+    let t = q.get_treasury();
+    let datefmt = Treasury::get_default_date_fmt();
+
+    table.add_row(row!["Security Term:", t.get_term()]);
+    table.add_row(row!["CUSIP", t.cusip()]);
+
+    table.add_row(row![
+        "Reopening:",
+        if t.is_reopening() { "Yes" } else { "No" }
+    ]);
+
+    table.add_row(row!["Security Type:", t.security_type]);
+    table.add_row(row!["Issue Date:", t.issue_date.format(datefmt)]);
+    table.add_row(row!["Maturity Date", t.issue_date.format(datefmt)]);
+    table.add_row(row!["Maturity Date:", t.maturity_date.format(datefmt)]);
+
+    table.add_row(row![
+        "Bid To Cover:",
+        format!(
+            "{:.2} ({:.2})",
+            t.get_bid_to_cover_ratio(),
+            q.get_bid_to_cover_ratio(),
+        )
+    ]);
+
+    table.add_row(row![
+        "Dealers %",
+        format!(
+            "{:.2}% ({:.2}%)",
+            t.get_percentage_debt_purchased_by_dealers(),
+            q.get_percentage_debt_purchased_by_dealers(),
+        )
+    ]);
+
+    table.add_row(row![
+        "Indirects %",
+        format!(
+            "{:.2}% ({:.2}%)",
+            t.get_percentage_debt_purchased_by_indirects(),
+            q.get_percentage_debt_purchased_by_indirects()
+        )
+    ]);
+
+    table.add_row(row![
+        "Directs %",
+        format!(
+            "{:.2}% ({:.2}%)",
+            t.get_percentage_debt_purchased_by_directs(),
+            q.get_percentage_debt_purchased_by_directs(),
+        )
+    ]);
+
+    if t.security_type == SecurityType::Bill {
+        table.add_row(row!["High Rate:", &format!("{:.3}%", t.high_discount_rate)]);
+        table.add_row(row![
+            "Investment Rate:",
+            &format!("{:.3}%", t.high_investment_rate)
+        ]);
+    } else {
+        table.add_row(row!["High Yield:", &format!("{:.3}%", t.high_yield)]);
+        table.add_row(row!["Interest Rate:", &format!("{:.3}%", t.interest_rate)]);
+    }
+
+    table.add_row(row!["Quality:", &format!("{:.3}", aq)]);
+    table.add_row(Row::empty());
+
+    table.printstd();
 }
 
 #[cfg(test)]
