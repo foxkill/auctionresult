@@ -157,16 +157,18 @@ pub fn handle_latest(args: &AuctionResultParser) {
 #[cfg(feature = "quality")]
 /// Handle the quality command.
 pub fn handle_quality(args: &AuctionResultParser) {
+    use auctionresult::treasury::print::auction_quality_print;
+
     #[cfg(feature = "quality")]
     let AuctionResultCommands::Quality { cusip } = &args.command else {
         exit(handle_error(AuctionResultError::ParseCusip));
     };
 
-    let quality_command = quality::Quality::new(cusip, 5);
+    let mut quality_command = quality::Quality::new(cusip, 5);
     let quality = match quality_command.get() {
         Ok(q) => q,
         Err(e) => exit(handle_error(e)),
     };
 
-    println!("The quality of the auction {} is: {}", cusip, quality);
+    auction_quality_print(&q, &quality_command);
 }
