@@ -164,7 +164,7 @@ pub fn handle_quality(args: &AuctionResultParser) {
         exit(handle_error(AuctionResultError::ParseCusip));
     };
 
-    let mut quality_command = quality::Quality::new(cusip, 5);
+    let quality_command = quality::QualityCommand::new(cusip, 5);
     let result = quality_command.calculate();
     
     let Ok(q) = result else {
