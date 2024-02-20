@@ -2,7 +2,7 @@
 //!
 extern crate prettytable;
 
-use crate::{quality::Quality, SecurityType};
+use crate::{quality::AuctionQuality, SecurityType};
 
 use super::{Treasuries, Treasury};
 use prettytable::{
@@ -168,7 +168,7 @@ pub fn security_vprint(treasuries: &Treasuries) {
 }
 
 /// Print auction quotes for a given treasury.
-pub fn auction_quality_print(quality: &Quality) {
+pub fn auction_quality_print(quality: &AuctionQuality) {
     let mut table = Table::new();
     table.set_format(*format::consts::FORMAT_CLEAN);
 
