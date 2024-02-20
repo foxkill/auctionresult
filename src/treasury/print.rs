@@ -170,32 +170,34 @@ pub fn security_vprint(treasuries: &Treasuries) {
 }
 
 /// Print auction quotes for a given treasury.
-pub fn auction_quality_print(aq: f64, q: &Quality) {
+pub fn auction_quality_print(quality: &Quality) {
     let mut table = Table::new();
     table.set_format(*format::consts::FORMAT_CLEAN);
 
-    let t = q.get_treasury();
+    let treasury = quality.get_treasury();
     let datefmt = Treasury::get_default_date_fmt();
 
-    table.add_row(row!["Security Term:", t.get_term()]);
-    table.add_row(row!["CUSIP", t.cusip()]);
+    table.add_row(row!["Number of auction used to calculate the quality:", quality.get_number_of_lookback_auctions()]);
+    table.add_empty_row();
+    table.add_row(row!["Security Term:", treasury.get_term()]);
+    table.add_row(row!["CUSIP", treasury.cusip()]);
 
     table.add_row(row![
         "Reopening:",
-        if t.is_reopening() { "Yes" } else { "No" }
+        if treasury.is_reopening() { "Yes" } else { "No" }
     ]);
 
-    table.add_row(row!["Security Type:", t.security_type]);
-    table.add_row(row!["Issue Date:", t.issue_date.format(datefmt)]);
-    table.add_row(row!["Maturity Date", t.issue_date.format(datefmt)]);
-    table.add_row(row!["Maturity Date:", t.maturity_date.format(datefmt)]);
+    table.add_row(row!["Security Type:", treasury.security_type]);
+    table.add_row(row!["Issue Date:", treasury.issue_date.format(datefmt)]);
+    table.add_row(row!["Maturity Date", treasury.issue_date.format(datefmt)]);
+    table.add_row(row!["Maturity Date:", treasury.maturity_date.format(datefmt)]);
 
     table.add_row(row![
         "Bid To Cover:",
         format!(
             "{:.2} ({:.2})",
-            t.get_bid_to_cover_ratio(),
-            q.get_bid_to_cover_ratio(),
+            treasury.get_bid_to_cover_ratio(),
+            quality.get_bid_to_cover_ratio(),
         )
     ]);
 
@@ -203,8 +205,8 @@ pub fn auction_quality_print(aq: f64, q: &Quality) {
         "Dealers %",
         format!(
             "{:.2}% ({:.2}%)",
-            t.get_percentage_debt_purchased_by_dealers(),
-            q.get_percentage_debt_purchased_by_dealers(),
+            treasury.get_percentage_debt_purchased_by_dealers(),
+            quality.get_percentage_debt_purchased_by_dealers(),
         )
     ]);
 
@@ -212,8 +214,8 @@ pub fn auction_quality_print(aq: f64, q: &Quality) {
         "Indirects %",
         format!(
             "{:.2}% ({:.2}%)",
-            t.get_percentage_debt_purchased_by_indirects(),
-            q.get_percentage_debt_purchased_by_indirects()
+            treasury.get_percentage_debt_purchased_by_indirects(),
+            quality.get_percentage_debt_purchased_by_indirects()
         )
     ]);
 
@@ -221,46 +223,24 @@ pub fn auction_quality_print(aq: f64, q: &Quality) {
         "Directs %",
         format!(
             "{:.2}% ({:.2}%)",
-            t.get_percentage_debt_purchased_by_directs(),
-            q.get_percentage_debt_purchased_by_directs(),
+            treasury.get_percentage_debt_purchased_by_directs(),
+            quality.get_percentage_debt_purchased_by_directs(),
         )
     ]);
 
-    if t.security_type == SecurityType::Bill {
-        table.add_row(row!["High Rate:", &format!("{:.3}%", t.high_discount_rate)]);
+    if treasury.security_type == SecurityType::Bill {
+        table.add_row(row!["High Rate:", &format!("{:.3}%", treasury.high_discount_rate)]);
         table.add_row(row![
             "Investment Rate:",
-            &format!("{:.3}%", t.high_investment_rate)
+            &format!("{:.3}%", treasury.high_investment_rate)
         ]);
     } else {
-        table.add_row(row!["High Yield:", &format!("{:.3}%", t.high_yield)]);
-        table.add_row(row!["Interest Rate:", &format!("{:.3}%", t.interest_rate)]);
+        table.add_row(row!["High Yield:", &format!("{:.3}%", treasury.high_yield)]);
+        table.add_row(row!["Interest Rate:", &format!("{:.3}%", treasury.interest_rate)]);
     }
 
-    table.add_row(row!["Quality:", &format!("{:.3}", aq)]);
+    table.add_row(row!["Quality:", &format!("{:.3}", quality.get())]);
     table.add_row(Row::empty());
 
     table.printstd();
-}
-
-#[cfg(test)]
-mod tests {
-    use crate::{tests::fixture::api_multiple_items, treasury::Treasury};
-
-    // use super::*;
-
-    #[test]
-    fn it_should_print_out_treasury_horizontal() {
-        let data = api_multiple_items();
-        let _treasuries: Vec<Treasury> = serde_json::from_str(data).unwrap();
-
-        // security_vprint(&treasuries);
-    }
-    #[test]
-    fn it_should_print_out_treasury_vertical() {
-        let data = api_multiple_items();
-        let _treasuries: Vec<Treasury> = serde_json::from_str(data).unwrap();
-
-        // security_print(&treasuries);
-    }
 }

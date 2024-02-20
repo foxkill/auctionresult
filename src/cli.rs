@@ -165,10 +165,11 @@ pub fn handle_quality(args: &AuctionResultParser) {
     };
 
     let mut quality_command = quality::Quality::new(cusip, 5);
-    let quality = match quality_command.get() {
-        Ok(q) => q,
-        Err(e) => exit(handle_error(e)),
+    let result = quality_command.calculate();
+    
+    let Ok(q) = result else {
+        exit(handle_error(result.unwrap_err()))
     };
 
-    auction_quality_print(&q, &quality_command);
+    auction_quality_print(&q);
 }
