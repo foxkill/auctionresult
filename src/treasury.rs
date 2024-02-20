@@ -86,8 +86,8 @@ impl Treasury {
     }
 
     /// Return the CUSIP number of the treasury.
-    pub fn cusip(&self) -> String {
-        self.cusip.to_string()
+    pub fn cusip(&self) -> &str {
+        self.cusip.as_str()
     }
 
     /// Return if an auction is re-openend.
@@ -127,18 +127,18 @@ impl Treasury {
     }
 
     /// Return the term string of the treasury structure.
-    pub fn get_term(&self) -> String {
-        self.term.to_owned()
+    pub fn get_term(&self) -> &str {
+        self.term.as_str()
     }
 
     /// Return the security term string of the treasury structure.
-    pub fn get_security_term(&self) -> String {
-        self.security_term.to_owned()
+    pub fn get_security_term(&self) -> &str {
+        self.security_term.as_str()
     }
 
     /// Return the original security term string of the treasury structure.
-    pub fn get_original_security_term(&self) -> String {
-        self.original_security_term.to_owned()
+    pub fn get_original_security_term(&self) -> &str {
+        self.original_security_term.as_str()
     }
 
     /// Get the security type of the treasury.
