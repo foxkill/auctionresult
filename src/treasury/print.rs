@@ -114,10 +114,6 @@ pub fn security_vprint(treasuries: &Treasuries) {
         table.add_row(row!["Security Type:", &treasury.security_type]);
         table.add_row(row!["Issue Date:", treasury.issue_date.format(datefmt)]);
         table.add_row(row![
-            "Maturity Date",
-            treasury.maturity_date.format(datefmt)
-        ]);
-        table.add_row(row![
             "Maturity Date:",
             treasury.maturity_date.format(datefmt)
         ]);
@@ -126,27 +122,29 @@ pub fn security_vprint(treasuries: &Treasuries) {
             format!("{:.2}", treasury.bid_to_cover_ratio)
         ]);
         table.add_row(row![
-            "Dealers %",
+            "Dealers %:",
             format!(
                 "{:.2}%",
                 treasury.get_percentage_debt_purchased_by_dealers()
             )
         ]);
         table.add_row(row![
-            "Indirects %",
+            "Directs %:",
             format!(
                 "{:.2}%",
                 treasury.get_percentage_debt_purchased_by_directs()
             )
         ]);
         table.add_row(row![
-            "Indirects %",
+            "Indirects %:",
             format!(
                 "{:.2}%",
                 treasury.get_percentage_debt_purchased_by_indirects()
             )
         ]);
-        if treasury.security_type == SecurityType::Bill {
+
+        // TODO: Find out how FRN rates are shown.
+        if treasury.security_type == SecurityType::Bill || treasury.security_type == SecurityType::Cmb {
             table.add_row(row![
                 "High Rate:",
                 &format!("{:.3}%", treasury.high_discount_rate)
