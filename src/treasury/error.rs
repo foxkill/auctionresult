@@ -24,3 +24,13 @@ impl From<Box<dyn Any + Send>> for AuctionResultError {
         AuctionResultError::RequestDyn(value)
     }
 }
+
+// This enables using `?` on functions that return `Result<_, anyhow::Error>` to turn them into
+// `Result<_, Parse>`. That way you don't need to do that manually.
+// impl<E> From<E> for AuctionResultError
+// where E: Into<reqwest::Error>,
+// {
+//     fn from(err: E) -> Self {
+//         Self(err.into())
+//     }
+// }
