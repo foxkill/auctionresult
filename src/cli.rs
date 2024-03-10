@@ -68,6 +68,9 @@ pub enum AuctionResultCommands {
         #[arg(value_name = "cusip", value_hint = ValueHint::CommandString)]
         /// Retrieve the details of a treasury with the given cusip number.
         cusip: String,
+        /// Determine the number of auctions to look back.
+        #[arg(value_name = "lookback", long)]
+        lookback: Option<usize>,
     },
 }
 
@@ -160,11 +163,12 @@ pub fn handle_quality(args: &AuctionResultParser) {
     use auctionresult::treasury::print::auction_quality_print;
 
     #[cfg(feature = "quality")]
-    let AuctionResultCommands::Quality { cusip } = &args.command else {
+    let AuctionResultCommands::Quality {cusip, lookback} = &args.command else {
         exit(handle_error(AuctionResultError::ParseCusip));
     };
 
-    let quality_command = quality::QualityCommand::new(cusip, 5);
+    let number_of_auctions = lookback.unwrap_or(0);
+    let quality_command = quality::QualityCommand::new(cusip, number_of_auctions);
     let result = quality_command.calculate();
     
     let Ok(q) = result else {

@@ -175,8 +175,8 @@ pub fn auction_quality_print(quality: &AuctionQuality) {
     let treasury = quality.get_treasury();
     let datefmt = Treasury::get_default_date_fmt();
 
-    table.add_row(row!["Number of auction used to calculate the quality:", quality.get_number_of_lookback_auctions()]);
     table.add_empty_row();
+    table.add_row(row!["Number of auctions used to calculate the quality:", quality.get_number_of_lookback_auctions()]);
     table.add_row(row!["Security Term:", treasury.get_term()]);
     table.add_row(row!["CUSIP", treasury.cusip()]);
 

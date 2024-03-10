@@ -26,7 +26,7 @@ fn main() {
             handle_latest(&args);
         }
         #[cfg(feature = "quality")]
-        AuctionResultCommands::Quality { cusip: _ } => {
+        AuctionResultCommands::Quality { cusip: _, lookback: _ } => {
             handle_quality(&args)
         }
     }
