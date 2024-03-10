@@ -19,8 +19,8 @@ use deserializer::f64_from_string;
 
 // Re-Export
 pub use error::AuctionResultError;
-pub use security_type::SecurityType;
 pub use load::load;
+pub use security_type::SecurityType;
 
 const DEFAULT_SECURITY_DATE_FORMAT: &str = "%m/%d/%Y";
 
@@ -164,6 +164,15 @@ impl Treasury {
     /// Returns the get bid to cover ratio of this [`Treasury`].
     pub fn get_bid_to_cover_ratio(&self) -> f64 {
         self.bid_to_cover_ratio
+    }
+
+    /// Returns the get high discount rate of this [`Treasury`].
+    pub fn get_interest_rate(&self) -> f64 {
+        if self.security_type == SecurityType::Bill {
+            self.high_investment_rate
+        } else {
+            self.interest_rate
+        }
     }
 }
 

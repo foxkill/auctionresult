@@ -60,6 +60,7 @@ mod tests {
     use mockito::Matcher;
 
     const TEST_CUSIP: &str = "91282CJQ5";
+    
     #[test]
     fn it_should_correctly_build_an_url() {
         // if cfg!(target_os = "windows") {

@@ -7,8 +7,7 @@ use chrono::{DateTime, NaiveDateTime};
 
 use crate::{
     tests::fixture::{
-        api_empty_items, api_empty_response, api_multiple_items, api_single_item,
-        MULTIPLE_ITEMS_COUNT,
+        api_empty_items, api_empty_response, api_multiple_items, api_single_item, MULTIPLE_ITEMS_COUNT
     },
     treasury::Treasury
 };
