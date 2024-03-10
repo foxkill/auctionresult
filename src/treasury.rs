@@ -166,6 +166,15 @@ impl Treasury {
         self.bid_to_cover_ratio
     }
 
+    /// Returns the get high yield of this [`Treasury`].
+    pub fn get_high_yield(&self) -> f64 {
+        if self.security_type == SecurityType::Bill {
+            self.high_discount_rate
+        } else {
+            self.high_yield
+        }
+    }
+
     /// Returns the get high discount rate of this [`Treasury`].
     pub fn get_interest_rate(&self) -> f64 {
         if self.security_type == SecurityType::Bill {
