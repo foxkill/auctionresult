@@ -4,6 +4,8 @@
 pub mod get;
 pub mod latest;
 pub mod tenor;
+pub mod util;
+
 #[warn(missing_docs)]
 mod tests;
 pub mod treasury;
@@ -18,6 +20,8 @@ pub use latest::Latest;
 // Re-export Treasury Types
 pub use treasury::print::security_vprint;
 pub use treasury::SecurityType;
+
+pub use util::validate_cusip;
 // pub use self::treasury::Treasury;
 // pub use self::treasury::TreasuryAccess;
 // pub use self::treasury::AuctionResult;
