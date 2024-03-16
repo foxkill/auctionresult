@@ -11,6 +11,10 @@ use cli::AuctionResultParser;
 // Use directories crate for a directory for the cache.
 // Create a command for upcoming (list the auctions for the next 7 days).
 
+//#[clap(short = 'a', long = "print-all", conflicts_with = "report")]
+// printall: bool,
+
+
 fn main() {
     let args = AuctionResultParser::parse();
 
