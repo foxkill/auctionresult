@@ -14,6 +14,7 @@ use crate::treasury::{AuctionResult, AuctionResultError};
 pub struct Tenor {
     security: u32,
     term: String,
+    shortcut: String,
 }
 
 impl std::fmt::Display for Tenor {
@@ -31,7 +32,7 @@ impl Tenor {
         }
         // Guard
         let Some(captures) = re!(RE).captures(&s) else {
-            return Err(AuctionResultError::ParseCusip);
+            return Err(AuctionResultError::ParseTenor);
         };
 
         let security: &str = captures.name("security").map_or("", |m| m.as_str());
@@ -40,10 +41,11 @@ impl Tenor {
         if security.is_empty() || period.is_empty() {
             return Err(AuctionResultError::ParseTenor);
         }
-
-        let term = match period.to_lowercase().chars().next().unwrap_or(' ') {
+        let shortcut = period.to_lowercase().chars().next().unwrap_or('x');
+        let term = match shortcut {
             'y' => "Year",
             'w' => "Weeks",
+            'm' => "Months",
             'd' => "Day",
             _ => return Err(AuctionResultError::ParseTenor),
         };
@@ -56,6 +58,7 @@ impl Tenor {
         Ok(Self {
             term: term.to_owned(),
             security: sec,
+            shortcut: shortcut.to_string(),
         })
     }
 
@@ -63,6 +66,11 @@ impl Tenor {
     pub fn is_empty(&self) -> bool {
         self.term.is_empty() && self.security == 0
     }
+    
+    /// Return the security.
+    pub fn security(&self) -> u32 {
+        self.security
+    } 
 }
 
 #[cfg(test)]
@@ -84,7 +92,6 @@ mod tests {
     fn it_should_return_a_parse_error() {
         let result = Tenor::parse("--Y");
 
-        println!("{result:#?}");
-        assert!(result.is_err());
+        assert!(matches!(result, Err(AuctionResultError::ParseTenor)));
     }
 }
