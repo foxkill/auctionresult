@@ -8,7 +8,7 @@ pub use self::auctioned::Latest;
 
 #[cfg(test)]
 mod test {
-    use chrono::{prelude::*, Duration, Months};
+    use chrono::{prelude::*, Months};
 
     use crate::tenor::Tenor;
 
