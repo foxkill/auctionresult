@@ -175,6 +175,11 @@ impl Treasury {
         }
     }
 
+    /// Return the issue date.
+    pub fn get_issue_date(&self) -> NaiveDateTime {
+        self.issue_date
+    }
+
     /// Returns the get high discount rate of this [`Treasury`].
     pub fn get_interest_rate(&self) -> f64 {
         if self.security_type == SecurityType::Bill {
