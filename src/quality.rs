@@ -99,7 +99,7 @@ impl QualityCommand {
     //
     /// [`treasuries`]: The treasuries to consider.
     /// [`lookback_auctions`]: The _number_ of auctions to consider in the past.
-    pub fn calculate_quality(&self, treasury: &Treasury, auction_quality: &mut AuctionQuality) -> AuctionResult<f64> {
+    fn calculate_quality(&self, treasury: &Treasury, auction_quality: &mut AuctionQuality) -> AuctionResult<f64> {
         // Get the term of the treasury specified by the given cusip.
         let tenor = Tenor::parse(treasury.get_term())?;
 
@@ -200,8 +200,6 @@ impl QualityCommand {
         auction_quality.indirect_bidders_prev = sum_indirect_bidders / last_auctions as f64;
         auction_quality.bid_to_cover_ratio_prev = sum_bid_to_cover / last_auctions as f64;
     }
-
-    
 }
 
 #[cfg(test)]
