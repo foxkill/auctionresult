@@ -24,6 +24,7 @@ impl std::fmt::Display for Tenor {
 }
 
 impl Tenor {
+    /// Contruct [`Tenor`] by parsing.
     pub fn parse(s: impl Into<String>) -> AuctionResult<Self> {
         let s = s.into();
 
@@ -71,6 +72,16 @@ impl Tenor {
     pub fn security(&self) -> u32 {
         self.security
     } 
+
+    /// Return the shortcut. Can be: "y", "m", "w" or "d".
+    pub fn shortcut(&self) -> &str {
+        self.shortcut.as_str()
+    }
+
+    /// Return the term.
+    pub fn term(&self) -> &str {
+        self.term.as_str()
+    }
 }
 
 #[cfg(test)]
