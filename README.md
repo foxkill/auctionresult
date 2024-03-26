@@ -25,7 +25,7 @@ foo@bar:~$
 +------------------+-----------+-----------+---------------+------------+---------------+--------------+-----------+-----------+-------------+------------+---------------+
 ```
 
-You have also the possiblity to display the results in a vertical format:
+You have also the possiblity to display the results in a vertical format if you apple the --vertical (-E) parameter:
 
 ```console
 foo@bar:~$ ars -E latest --sectype=bond --tenor=20y --days=153
