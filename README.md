@@ -4,7 +4,6 @@ ars is a command line tool that can show the results of treasury auctions. The´
 
 ```console
 foo@bar:~$ ars latest --sectype=bond --tenor=20y --days=153
-foo
 ```
 which gives the following results:
 
