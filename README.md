@@ -1,6 +1,7 @@
 # Ars (stands for auction result)
 
-ars is a command line tool that can show the results of treasury auctions. The results can move market when they are very bad (tailing) or are received very goot (stop through). You can get the results for bonds that were auctioned let's say for 153 days and were in the 20yr tenor
+ars is a command line tool that can show the results of treasury auctions. The´se results can move market when they are either very bad (tails) or are received as very good (stop through). You can get the results for bonds that were auctioned let's say in the 153 days and were in the 20yr tenor by:
+
 ```console
 foo@bar:~$ ars latest --sectype=bond --tenor=20y --days=153
 foo
