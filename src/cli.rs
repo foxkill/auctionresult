@@ -1,10 +1,10 @@
 //! # The client helper.
 //!
 //!
-use std::process::exit;
-use std::str::FromStr;
+
 #[cfg(feature = "quality")]
 use auctionresult::quality;
+
 use auctionresult::security_vprint;
 use auctionresult::tenor::Tenor;
 use auctionresult::treasury::print::security_print;
@@ -14,9 +14,13 @@ use auctionresult::Get;
 use auctionresult::Latest;
 use auctionresult::SecurityType;
 
+use std::process::exit;
+use std::str::FromStr;
+
 use clap::Parser;
 use clap::Subcommand;
 use clap::ValueHint;
+use reqwest::StatusCode;
 
 // The Parser.
 #[derive(Debug, Parser)]
@@ -74,10 +78,14 @@ pub enum AuctionResultCommands {
     },
 }
 
+/// Handle the error by printing the error message and returning the exit code.
 fn handle_error(e: AuctionResultError) -> i32 {
     match e {
         AuctionResultError::Request(req) => {
-            println!("Invalid Request, status code {}", req.status().unwrap());
+            println!(
+                "Invalid Request, status code: {}",
+                req.status().unwrap_or(StatusCode::IM_A_TEAPOT)
+            );
             1
         }
         AuctionResultError::RequestDyn(_) => {
@@ -129,7 +137,14 @@ pub fn handle_latest(args: &AuctionResultParser) {
     };
 
     let security_type = sectype.as_ref().map_or(SecurityType::Null, |st| {
-        SecurityType::from_str(st).unwrap_or(SecurityType::Null)
+        let stype = SecurityType::from_str(st);
+
+        if stype.is_err() {
+            eprintln!("Could not parse security type: {:?}", sectype.as_ref().unwrap());
+            exit(1);
+        };
+
+        stype.unwrap()
     });
 
     let look_back_days = days.unwrap_or(0);
@@ -163,14 +178,15 @@ pub fn handle_quality(args: &AuctionResultParser) {
     use auctionresult::treasury::print::auction_quality_print;
 
     #[cfg(feature = "quality")]
-    let AuctionResultCommands::Quality {cusip, lookback} = &args.command else {
+    let AuctionResultCommands::Quality { cusip, lookback } = &args.command
+    else {
         exit(handle_error(AuctionResultError::ParseCusip));
     };
 
     let number_of_auctions = lookback.unwrap_or(0);
     let quality_command = quality::QualityCommand::new(cusip, number_of_auctions);
     let result = quality_command.calculate();
-    
+
     let Ok(q) = result else {
         exit(handle_error(result.unwrap_err()))
     };
